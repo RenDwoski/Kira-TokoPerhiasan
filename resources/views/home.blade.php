@@ -230,7 +230,7 @@
             <div class="mt-8 grid grid-cols-1 md:grid-cols-3 gap-6">
                 @foreach ($featuredProducts as $product)
                     <article data-product-category="{{ $product['category'] }}"
-                             class="home-product-card {{ $product['featured_primary'] ? 'bento-card-featured' : 'bento-card' }} p-5 flex flex-col justify-between">
+                             class="home-product-card bento-card p-5 flex flex-col justify-between">
                         <div>
                             <!-- Product Image Wrapper (344x236 aspect) -->
                             <div class="relative w-full h-[236px] rounded-[18px] overflow-hidden bg-[#122030]">
@@ -241,19 +241,11 @@
                                      class="w-full h-full object-cover hover:scale-105 transition-transform duration-500">
 
                                 <!-- Top Left Badge Pill -->
-                                @if ($product['badge_theme'] === 'dark')
-                                    <div class="absolute top-3.5 left-3.5 px-3.5 py-1 rounded-full bg-[#0F1E2E]/90 border border-[#C99A49]/60">
-                                        <span class="font-sans font-bold text-[9.5px] tracking-wider text-[#E6C587] uppercase">
-                                            {{ $product['badge'] }}
-                                        </span>
-                                    </div>
-                                @else
-                                    <div class="absolute top-3.5 left-3.5 px-3.5 py-1 rounded-full bg-[#F7F4EE]/95 border border-[#E5DEC9]">
-                                        <span class="font-sans font-bold text-[9.5px] tracking-wider text-[#0F1E2E] uppercase">
-                                            {{ $product['badge'] }}
-                                        </span>
-                                    </div>
-                                @endif
+                                <div class="absolute top-3.5 left-3.5 px-3.5 py-1 rounded-full bg-[#F7F4EE]/95 border border-[#E5DEC9]">
+                                    <span class="font-sans font-bold text-[9.5px] tracking-wider text-[#0F1E2E] uppercase">
+                                        {{ $product['badge'] }}
+                                    </span>
+                                </div>
                             </div>
 
                             <!-- Metal Swatch Dots (18K Champagne Gold, Platinum Pt950, Rose Gold) -->

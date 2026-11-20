@@ -62,14 +62,11 @@
         <div class="max-w-[1440px] mx-auto px-6 md:px-12 lg:px-[120px]">
             <div id="catalog-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 @foreach ($products as $index => $product)
-                    @php
-                        $isSelected = $product['id'] === $selectedProduct['id'];
-                    @endphp
                     <article data-id="{{ $product['id'] }}"
                              data-category="{{ $product['category'] }}"
                              data-price="{{ $product['price'] }}"
                              data-order="{{ $index }}"
-                             class="catalog-card {{ $isSelected ? 'bento-card-featured' : 'bento-card' }} p-5 flex flex-col justify-between transition-all duration-300">
+                             class="catalog-card bento-card p-5 flex flex-col justify-between transition-all duration-300">
                         <div>
                             <!-- Product Image -->
                             <div class="relative w-full h-[226px] rounded-[18px] overflow-hidden bg-[#122030]">
@@ -80,16 +77,10 @@
                                      class="w-full h-full object-cover hover:scale-105 transition-transform duration-500">
 
                                 <!-- Badge -->
-                                <div class="absolute top-3.5 left-3.5 px-3.5 py-1 rounded-full {{ $product['badge_theme'] === 'dark' ? 'bg-[#0F1E2E]/90 border border-[#C99A49]/60 text-[#E6C587]' : 'bg-[#F7F4EE]/95 border border-[#E5DEC9] text-[#0F1E2E]' }}">
+                                <div class="absolute top-3.5 left-3.5 px-3.5 py-1 rounded-full bg-[#F7F4EE]/95 border border-[#E5DEC9] text-[#0F1E2E]">
                                     <span class="font-sans font-bold text-[9.5px] tracking-wider uppercase">
                                         {{ $product['badge'] }}
                                     </span>
-                                </div>
-
-                                <!-- Selected Indicator Chip -->
-                                <div class="selected-chip {{ $isSelected ? 'flex' : 'hidden' }} absolute bottom-3 right-3 px-3 py-1 rounded-full bg-[#C99A49] text-[#0F1E2E] font-sans font-bold text-[9.5px] items-center gap-1 shadow-md">
-                                    <span>✓</span>
-                                    <span>SELECTED 4C</span>
                                 </div>
                             </div>
 
@@ -129,8 +120,8 @@
                         <div class="mt-5">
                             <button type="button"
                                     data-select-product="{{ $product['id'] }}"
-                                    class="select-product-btn w-full h-[44px] rounded-full font-sans font-bold text-[12.5px] flex items-center justify-center transition cursor-pointer {{ $isSelected ? 'bg-[#FAF8F3] border border-[#C99A49] text-[#0F1E2E] hover:bg-[#EFE9DC]' : 'bg-[#FAF8F3] border border-[#D8CEBE] text-[#0F1E2E] hover:bg-[#EFE9DC] hover:border-[#C99A49]' }}">
-                                <span class="btn-label">{{ $isSelected ? '✓ Lihat Spesifikasi 4C di Bawah' : 'Pilih & Cek Spesifikasi 4C' }}</span>
+                                    class="select-product-btn w-full h-[44px] rounded-full font-sans font-bold text-[12.5px] flex items-center justify-center transition cursor-pointer bg-[#FAF8F3] border border-[#D8CEBE] text-[#0F1E2E] hover:bg-[#EFE9DC] hover:border-[#C99A49]">
+                                <span class="btn-label">Pilih &amp; Cek Spesifikasi 4C</span>
                             </button>
                         </div>
                     </article>
@@ -462,28 +453,6 @@
             if (modalRowCut) modalRowCut.textContent = `${p.cut} • Triple Excellent`;
             if (modalRowLaser) modalRowLaser.textContent = `GIA ${p.gia_report} • KIRA 18K`;
             if (modalBookBtn) modalBookBtn.href = contactUrl;
-
-            // Update Card Active Styles
-            document.querySelectorAll('.catalog-card').forEach(card => {
-                const cid = card.getAttribute('data-id');
-                const btn = card.querySelector('.select-product-btn');
-                const chip = card.querySelector('.selected-chip');
-                const label = card.querySelector('.btn-label');
-
-                if (cid === productId) {
-                    card.classList.remove('bento-card');
-                    card.classList.add('bento-card-featured');
-                    if (chip) { chip.classList.remove('hidden'); chip.classList.add('flex'); }
-                    if (btn) btn.className = 'select-product-btn w-full h-[44px] rounded-full font-sans font-bold text-[12.5px] flex items-center justify-center transition cursor-pointer bg-[#FAF8F3] border border-[#C99A49] text-[#0F1E2E] hover:bg-[#EFE9DC]';
-                    if (label) label.textContent = '✓ Lihat Spesifikasi 4C di Bawah';
-                } else {
-                    card.classList.remove('bento-card-featured');
-                    card.classList.add('bento-card');
-                    if (chip) { chip.classList.add('hidden'); chip.classList.remove('flex'); }
-                    if (btn) btn.className = 'select-product-btn w-full h-[44px] rounded-full font-sans font-bold text-[12.5px] flex items-center justify-center transition cursor-pointer bg-[#FAF8F3] border border-[#D8CEBE] text-[#0F1E2E] hover:bg-[#EFE9DC] hover:border-[#C99A49]';
-                    if (label) label.textContent = 'Pilih & Cek Spesifikasi 4C';
-                }
-            });
 
             if (shouldScroll) {
                 document.getElementById('gia-specs')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
