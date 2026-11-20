@@ -577,6 +577,18 @@
         giaModal?.addEventListener('click', (e) => {
             if (e.target === giaModal) closeGiaModal();
         });
+
+        // Support client-side ?item= and ?category= query params (for static GitHub Pages)
+        const urlParams = new URLSearchParams(window.location.search);
+        const queryItem = urlParams.get('item');
+        if (queryItem && productMap[queryItem]) {
+            selectProduct(queryItem, false);
+        }
+        const queryCategory = urlParams.get('category');
+        if (queryCategory) {
+            const targetFilterBtn = document.querySelector(`[data-catalog-filter="${queryCategory}"]`);
+            targetFilterBtn?.click();
+        }
     });
 </script>
 @endpush

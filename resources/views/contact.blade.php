@@ -263,9 +263,9 @@
                 $isJustConfirmed = !empty($bookingConfirmation) || request()->has('confirmed');
             @endphp
 
-            <div class="rounded-[28px] {{ $isJustConfirmed ? 'bg-[#0F1E2E] text-white border-2 border-[#C99A49] ring-4 ring-[#C99A49]/25' : 'bg-white text-[#0F1E2E] border-2 border-[#C99A49]/75' }} p-7 sm:p-10 shadow-xl transition-all">
+            <div id="vip-confirmation-card" class="rounded-[28px] {{ $isJustConfirmed ? 'bg-[#0F1E2E] text-white border-2 border-[#C99A49] ring-4 ring-[#C99A49]/25' : 'bg-white text-[#0F1E2E] border-2 border-[#C99A49]/75' }} p-7 sm:p-10 shadow-xl transition-all">
 
-                <div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full {{ $isJustConfirmed ? 'bg-[#C99A49] text-[#0F1E2E]' : 'bg-[#0F1E2E] text-[#E6C587]' }} font-sans font-bold text-[10.5px] tracking-wider uppercase mb-6">
+                <div id="vip-confirmation-badge" class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full {{ $isJustConfirmed ? 'bg-[#C99A49] text-[#0F1E2E]' : 'bg-[#0F1E2E] text-[#E6C587]' }} font-sans font-bold text-[10.5px] tracking-wider uppercase mb-6">
                     <span>✦</span>
                     <span>3. THE FINAL INTERACTION (STATE KONFIRMASI SUKSES)</span>
                 </div>
@@ -278,21 +278,21 @@
 
                     <!-- Confirmation Details (11:988 - 11:995) -->
                     <div class="flex-1">
-                        <h2 class="font-serif font-bold text-[26px] sm:text-[34px] {{ $isJustConfirmed ? 'text-white' : 'text-[#0F1E2E]' }} leading-snug">
+                        <h2 id="conf-heading" class="font-serif font-bold text-[26px] sm:text-[34px] {{ $isJustConfirmed ? 'text-white' : 'text-[#0F1E2E]' }} leading-snug">
                             Reservasi Private Viewing Berhasil Dikonfirmasi!
                         </h2>
-                        @if (!empty($bookingConfirmation['full_name']))
-                            <p class="mt-1 font-sans font-bold text-[14px] text-[#C99A49]">
+                        <p id="conf-guest-row" class="{{ !empty($bookingConfirmation['full_name']) ? '' : 'hidden' }} mt-1 font-sans font-bold text-[14px] text-[#C99A49]">
+                            @if (!empty($bookingConfirmation['full_name']))
                                 Tamu VIP: {{ $bookingConfirmation['full_name'] }} ({{ $bookingConfirmation['email'] }} • {{ $bookingConfirmation['whatsapp'] }})
-                            </p>
-                        @endif
-                        <p class="mt-2 font-sans font-bold text-[15.5px] {{ $isJustConfirmed ? 'text-[#E6C587]' : 'text-[#9E7329]' }}">
+                            @endif
+                        </p>
+                        <p id="conf-meta-row" class="mt-2 font-sans font-bold text-[15.5px] {{ $isJustConfirmed ? 'text-[#E6C587]' : 'text-[#9E7329]' }}">
                             Kode Booking VIP: <span id="conf-code">{{ $conf['code'] }}</span> • <span id="conf-datetime">{{ $conf['visit_date'] }} ({{ $conf['time_slot'] }})</span>
                         </p>
-                        <p class="mt-1.5 font-sans font-medium text-[14px] {{ $isJustConfirmed ? 'text-[#DCE6F2]' : 'text-[#0F1E2E]' }}">
+                        <p id="conf-location-row" class="mt-1.5 font-sans font-medium text-[14px] {{ $isJustConfirmed ? 'text-[#DCE6F2]' : 'text-[#0F1E2E]' }}">
                             Lokasi: {{ $conf['location'] }} • Koleksi: <strong id="conf-collection">{{ $conf['collection'] }}</strong>
                         </p>
-                        <p class="mt-1.5 font-sans text-[13px] {{ $isJustConfirmed ? 'text-[#DCE6F2]/85' : 'text-[#5C6877]' }}">
+                        <p id="conf-note-row" class="mt-1.5 font-sans text-[13px] {{ $isJustConfirmed ? 'text-[#DCE6F2]/85' : 'text-[#5C6877]' }}">
                             E-Invitation resmi beserta salinan Sertifikat GIA #<span id="conf-gia">{{ $conf['gia_report'] }}</span> telah disiapkan untuk sesi inspeksi mikroskop 10x Anda.
                         </p>
 
@@ -303,7 +303,8 @@
                                     class="h-[52px] px-7 rounded-full bg-[#C99A49] text-[#0F1E2E] font-sans font-bold text-[13.5px] hover:bg-[#E6C587] transition cursor-pointer shadow-md">
                                 Unduh / Cetak E-Invitation (PDF)
                             </button>
-                            <a href="{{ route('home') }}"
+                            <a id="conf-home-btn"
+                               href="{{ route('home') }}"
                                class="h-[52px] px-7 rounded-full {{ $isJustConfirmed ? 'bg-white/10 border border-white/25 text-white hover:bg-white/20' : 'bg-[#FAF8F3] border border-[#D8CEBE] text-[#0F1E2E] hover:border-[#C99A49]' }} font-sans font-bold text-[13.5px] flex items-center justify-center transition">
                                 ← Kembali ke Homepage (Selesai)
                             </a>
@@ -350,10 +351,96 @@
 @push('scripts')
 <script>
     document.addEventListener('DOMContentLoaded', () => {
-        // Scroll to confirmation if form was just submitted
+        const productsData = @json($products);
+
+        // Pre-select collection from ?collection= query parameter (for static GitHub Pages)
+        const urlParams = new URLSearchParams(window.location.search);
+        const queryCollection = urlParams.get('collection');
+        const collectionSelect = document.getElementById('collection');
+        if (queryCollection && collectionSelect) {
+            const matchOpt = Array.from(collectionSelect.options).find(opt =>
+                opt.value.toLowerCase().includes(queryCollection.toLowerCase()) ||
+                queryCollection.toLowerCase().includes(opt.value.toLowerCase())
+            );
+            if (matchOpt) {
+                collectionSelect.value = matchOpt.value;
+            }
+        }
+
+        // Scroll to confirmation if form was just submitted via Laravel backend
         @if (!empty($bookingConfirmation) || request()->has('confirmed'))
             document.getElementById('vip-confirmation-section')?.scrollIntoView({ behavior: 'smooth', block: 'center' });
         @endif
+
+        // Client-side VIP Booking handler when hosted statically on GitHub Pages
+        const bookingForm = document.getElementById('vip-booking-form');
+        const isStaticHost = window.location.hostname.endsWith('github.io') || window.location.protocol === 'file:';
+        if (bookingForm && isStaticHost) {
+            bookingForm.addEventListener('submit', (e) => {
+                e.preventDefault();
+                const fullName = document.getElementById('full_name')?.value.trim() || 'Tamu Kehormatan KIRA';
+                const email = document.getElementById('email')?.value.trim() || '';
+                const whatsapp = document.getElementById('whatsapp')?.value.trim() || '';
+                const selectedCol = collectionSelect?.value || 'The Lotus Crown Solitaire';
+                const visitDate = document.getElementById('visit_date')?.value.trim() || 'Sabtu, 14 November 2026';
+                const timeSlot = document.getElementById('time_slot')?.value || 'Sesi Siang (14:00 WIB)';
+
+                const matchedProduct = productsData.find(p =>
+                    selectedCol.toLowerCase().includes(p.name.toLowerCase()) ||
+                    p.name.toLowerCase().includes(selectedCol.toLowerCase())
+                ) || productsData[0];
+
+                const randomNum = String(Math.floor(Math.random() * 900) + 100);
+                const code = `#KIRA-VIP-2026-${randomNum}`;
+
+                const confCode = document.getElementById('conf-code');
+                const confDatetime = document.getElementById('conf-datetime');
+                const confCollection = document.getElementById('conf-collection');
+                const confGia = document.getElementById('conf-gia');
+                const confGuestRow = document.getElementById('conf-guest-row');
+                const confCard = document.getElementById('vip-confirmation-card');
+                const confBadge = document.getElementById('vip-confirmation-badge');
+                const confHeading = document.getElementById('conf-heading');
+                const confMetaRow = document.getElementById('conf-meta-row');
+                const confLocationRow = document.getElementById('conf-location-row');
+                const confNoteRow = document.getElementById('conf-note-row');
+                const confHomeBtn = document.getElementById('conf-home-btn');
+
+                if (confCode) confCode.textContent = code;
+                if (confDatetime) confDatetime.textContent = `${visitDate} (${timeSlot})`;
+                if (confCollection) confCollection.textContent = `${matchedProduct.name} (${matchedProduct.carat})`;
+                if (confGia) confGia.textContent = matchedProduct.gia_report;
+                if (confGuestRow) {
+                    confGuestRow.textContent = `Tamu VIP: ${fullName} (${email} • ${whatsapp})`;
+                    confGuestRow.classList.remove('hidden');
+                }
+
+                // Switch confirmation card to active Midnight Sapphire confirmed theme
+                if (confCard) {
+                    confCard.className = 'rounded-[28px] bg-[#0F1E2E] text-white border-2 border-[#C99A49] ring-4 ring-[#C99A49]/25 p-7 sm:p-10 shadow-xl transition-all';
+                }
+                if (confBadge) {
+                    confBadge.className = 'inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-[#C99A49] text-[#0F1E2E] font-sans font-bold text-[10.5px] tracking-wider uppercase mb-6';
+                }
+                if (confHeading) {
+                    confHeading.className = 'font-serif font-bold text-[26px] sm:text-[34px] text-white leading-snug';
+                }
+                if (confMetaRow) {
+                    confMetaRow.className = 'mt-2 font-sans font-bold text-[15.5px] text-[#E6C587]';
+                }
+                if (confLocationRow) {
+                    confLocationRow.className = 'mt-1.5 font-sans font-medium text-[14px] text-[#DCE6F2]';
+                }
+                if (confNoteRow) {
+                    confNoteRow.className = 'mt-1.5 font-sans text-[13px] text-[#DCE6F2]/85';
+                }
+                if (confHomeBtn) {
+                    confHomeBtn.className = 'h-[52px] px-7 rounded-full bg-white/10 border border-white/25 text-white hover:bg-white/20 font-sans font-bold text-[13.5px] flex items-center justify-center transition';
+                }
+
+                document.getElementById('vip-confirmation-section')?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            });
+        }
 
         // Interactive FAQ Accordions
         document.querySelectorAll('.faq-item').forEach(item => {
