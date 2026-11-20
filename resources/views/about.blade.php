@@ -229,7 +229,7 @@
                 <div class="shrink-0">
                     <a href="{{ route('products') }}"
                        class="inline-flex items-center justify-center h-[54px] px-8 rounded-full bg-[#0F1E2E] text-white font-sans font-bold text-[13.5px] hover:bg-[#193048] transition">
-                        Lihat Koleksi Kami →
+                        Lihat Koleksi Kami
                     </a>
                 </div>
             </div>

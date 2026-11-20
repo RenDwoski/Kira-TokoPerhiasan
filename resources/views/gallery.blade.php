@@ -89,7 +89,7 @@
                                             [Hotspot Pin] The Lotus Crown Solitaire (1.50 Ct)
                                         </p>
                                         <p class="font-sans text-[11.5px] text-[#DCE6F2]">
-                                            Klik untuk menuju Detail Produk &amp; Sertifikat GIA (Page 03) →
+                                            Klik untuk menuju Detail Produk &amp; Sertifikat GIA (Page 03)
                                         </p>
                                     </div>
                                 </div>
@@ -117,7 +117,7 @@
                         </div>
                         <div class="absolute bottom-4 inset-x-4">
                             <h3 class="font-serif font-bold text-[18px] text-white">Macro Facet Refraction</h3>
-                            <p class="font-sans text-[11.5px] text-[#DCE6F2]">Simetri 58 Faset • 2.417 nD Fire →</p>
+                            <p class="font-sans text-[11.5px] text-[#DCE6F2]">Simetri 58 Faset • 2.417 nD Fire</p>
                         </div>
                     </a>
 
@@ -134,7 +134,7 @@
                         </div>
                         <div class="absolute bottom-4 inset-x-4">
                             <h3 class="font-serif font-bold text-[18px] text-white">Celestial Drop Campaign</h3>
-                            <p class="font-sans text-[11.5px] text-[#DCE6F2]">Celestial Lotus Earrings • GIA D-VS1 →</p>
+                            <p class="font-sans text-[11.5px] text-[#DCE6F2]">Celestial Lotus Earrings • GIA D-VS1</p>
                         </div>
                     </a>
 
@@ -163,7 +163,7 @@
                         </div>
                         <div class="absolute bottom-4 inset-x-4">
                             <h3 class="font-serif font-bold text-[18px] text-white">18K Champagne Gold Setting</h3>
-                            <p class="font-sans text-[11.5px] text-[#DCE6F2]">Haute Joaillerie Ensemble • 2026 →</p>
+                            <p class="font-sans text-[11.5px] text-[#DCE6F2]">Haute Joaillerie Ensemble • 2026</p>
                         </div>
                     </a>
 
@@ -185,7 +185,7 @@
                     </div>
                     <div class="absolute bottom-4 inset-x-4">
                         <h3 class="font-serif font-bold text-[18px] text-white">High Jewelry Necklace Showcase</h3>
-                        <p class="font-sans text-[11.5px] text-[#DCE6F2]">Kirana Starlight Pendant • GIA E-IF →</p>
+                        <p class="font-sans text-[11.5px] text-[#DCE6F2]">Kirana Starlight Pendant • GIA E-IF</p>
                     </div>
                 </a>
 
@@ -202,7 +202,7 @@
                     </div>
                     <div class="absolute bottom-4 inset-x-4">
                         <h3 class="font-serif font-bold text-[18px] text-white">Wedding Band Pairing Inspiration</h3>
-                        <p class="font-sans text-[11.5px] text-[#DCE6F2]">Kirana Starlight Pavé • 1.20 Ct →</p>
+                        <p class="font-sans text-[11.5px] text-[#DCE6F2]">Kirana Starlight Pavé • 1.20 Ct</p>
                     </div>
                 </a>
 
@@ -219,7 +219,7 @@
                     </div>
                     <div class="absolute bottom-4 inset-x-4">
                         <h3 class="font-serif font-bold text-[18px] text-white">VIP Salon Experience</h3>
-                        <p class="font-sans text-[11.5px] text-[#DCE6F2]">KIRA Plaza Indonesia Level 1 #108 →</p>
+                        <p class="font-sans text-[11.5px] text-[#DCE6F2]">KIRA Plaza Indonesia Level 1 #108</p>
                     </div>
                 </a>
             </div>
@@ -318,7 +318,7 @@
                         </p>
                         <a href="{{ route('contact') }}"
                            class="mt-5 w-full h-[46px] rounded-full bg-[#C99A49] text-[#0F1E2E] font-sans font-bold text-[13px] flex items-center justify-center hover:bg-[#E6C587] transition">
-                            Book Private Viewing →
+                            Book Private Viewing
                         </a>
                     </div>
                 </div>

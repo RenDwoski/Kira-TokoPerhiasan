@@ -130,7 +130,7 @@
                             <button type="button"
                                     data-select-product="{{ $product['id'] }}"
                                     class="select-product-btn w-full h-[44px] rounded-full font-sans font-bold text-[12.5px] flex items-center justify-center transition cursor-pointer {{ $isSelected ? 'bg-[#0F1E2E] text-white' : 'bg-[#FAF8F3] border border-[#D8CEBE] text-[#0F1E2E] hover:bg-[#EFE9DC] hover:border-[#C99A49]' }}">
-                                <span class="btn-label">{{ $isSelected ? '✓ Lihat Spesifikasi 4C di Bawah ↓' : 'Pilih & Cek Spesifikasi 4C' }}</span>
+                                <span class="btn-label">{{ $isSelected ? '✓ Lihat Spesifikasi 4C di Bawah' : 'Pilih & Cek Spesifikasi 4C' }}</span>
                             </button>
                         </div>
                     </article>
@@ -279,7 +279,7 @@
                                     <button type="button"
                                             id="open-gia-modal-btn"
                                             class="mt-1.5 inline-flex items-center gap-1 font-sans font-bold text-[12.5px] text-[#9E7329] hover:text-[#0F1E2E] underline cursor-pointer">
-                                        <span>Lihat &amp; Unduh Salinan Sertifikat GIA (Digital Preview) →</span>
+                                        <span>Lihat &amp; Unduh Salinan Sertifikat GIA (Digital Preview)</span>
                                     </button>
                                 </div>
                             </div>
@@ -290,7 +290,7 @@
                             <a id="detail-book-cta"
                                href="{{ route('contact', ['collection' => $selectedProduct['name']]) }}"
                                class="flex-1 h-[56px] px-7 rounded-full bg-[#0F1E2E] text-white font-sans font-bold text-[14px] flex items-center justify-center hover:bg-[#193048] shadow-md transition">
-                                Book Private Viewing untuk Cincin Ini →
+                                Book Private Viewing untuk Cincin Ini
                             </a>
                             <a href="{{ route('contact') }}"
                                class="h-[56px] px-7 rounded-full bg-white border border-[#C99A49] text-[#0F1E2E] font-sans font-bold text-[14px] flex items-center justify-center hover:bg-[#EFE9DC] transition">
@@ -378,7 +378,7 @@
                 <a id="modal-book-btn"
                    href="{{ route('contact', ['collection' => $selectedProduct['name']]) }}"
                    class="px-6 py-2.5 rounded-full bg-[#0F1E2E] text-white font-sans font-bold text-[12.5px] hover:bg-[#193048]">
-                    Verifikasi Langsung di Butik (VIP Booking) →
+                    Verifikasi Langsung di Butik (VIP Booking)
                 </a>
             </div>
         </div>
@@ -475,7 +475,7 @@
                     card.classList.add('bento-card-featured');
                     if (chip) { chip.classList.remove('hidden'); chip.classList.add('flex'); }
                     if (btn) btn.className = 'select-product-btn w-full h-[44px] rounded-full font-sans font-bold text-[12.5px] flex items-center justify-center transition cursor-pointer bg-[#0F1E2E] text-white';
-                    if (label) label.textContent = '✓ Lihat Spesifikasi 4C di Bawah ↓';
+                    if (label) label.textContent = '✓ Lihat Spesifikasi 4C di Bawah';
                 } else {
                     card.classList.remove('bento-card-featured');
                     card.classList.add('bento-card');

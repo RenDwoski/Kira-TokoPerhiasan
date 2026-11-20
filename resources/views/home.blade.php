@@ -45,7 +45,7 @@
                     <div class="mt-10 flex flex-wrap items-center gap-4">
                         <a href="{{ route('products') }}"
                            class="inline-flex items-center justify-center h-[56px] px-8 rounded-full bg-[#0F1E2E] border border-[#C99A49]/60 text-white font-sans font-bold text-[14px] hover:bg-[#193048] hover:shadow-lg transition-all duration-300">
-                            Jelajahi Koleksi →
+                            Jelajahi Koleksi
                         </a>
                         <a href="{{ route('about') }}"
                            class="inline-flex items-center justify-center h-[56px] px-8 rounded-full bg-white/90 border border-[#C99A49]/65 text-[#0F1E2E] font-sans font-bold text-[14px] hover:bg-[#EFE9DC]/70 transition-all duration-300">
@@ -289,12 +289,12 @@
                             @if ($product['featured_primary'])
                                 <a href="{{ route('products', ['item' => $product['id']]) }}#gia-specs"
                                    class="w-full h-[46px] rounded-full bg-[#0F1E2E] text-white font-sans font-bold text-[12.5px] flex items-center justify-center hover:bg-[#193048] transition">
-                                    Lihat Detail Produk &amp; 4C →
+                                    Lihat Detail Produk &amp; 4C
                                 </a>
                             @else
                                 <a href="{{ route('products', ['item' => $product['id']]) }}#gia-specs"
                                    class="w-full h-[46px] rounded-full bg-[#FAF8F3] border border-[#D8CEBE] text-[#0F1E2E] font-sans font-bold text-[12.5px] flex items-center justify-center hover:bg-[#EFE9DC] hover:border-[#C99A49] transition">
-                                    Lihat Detail Produk &amp; 4C →
+                                    Lihat Detail Produk &amp; 4C
                                 </a>
                             @endif
                         </div>
@@ -361,7 +361,7 @@
                         <div class="mt-6">
                             <a href="{{ route('about') }}"
                                class="inline-flex items-center justify-center h-[48px] px-7 rounded-full bg-[#FAF8F3] border border-[#C99A49]/75 text-[#0F1E2E] font-sans font-bold text-[13px] hover:bg-[#EFE9DC] transition">
-                                Pelajari Kisah KIRA →
+                                Pelajari Kisah KIRA
                             </a>
                         </div>
                     </div>
@@ -392,7 +392,7 @@
                     <div class="shrink-0">
                         <a href="{{ route('contact') }}"
                            class="inline-flex items-center justify-center h-[60px] px-8 rounded-full bg-[#C99A49] text-[#0F1E2E] font-sans font-bold text-[14px] hover:bg-[#E6C587] shadow-lg transition-all duration-300">
-                            Book VIP Appointment →
+                            Book VIP Appointment
                         </a>
                     </div>
                 </div>

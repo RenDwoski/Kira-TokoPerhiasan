@@ -70,14 +70,14 @@
                             title="Klik untuk beralih mode Apple Glass (Full Bar / Floating Capsule / Midnight Dark Glass)"
                             class="hidden sm:inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white/90 border border-[#E5DEC9] text-[10px] font-bold text-[#5C6877] shadow-2xs hover:border-[#C99A49] transition-all duration-300 cursor-pointer">
                         <span id="kira-glass-dot" class="w-2 h-2 rounded-full bg-[#C99A49] transition-transform duration-300"></span>
-                        <span id="kira-glass-text">Scroll → Glass</span>
+                        <span id="kira-glass-text">Scroll Glass</span>
                     </button>
 
                     <!-- VIP Booking Primary Pill CTA -->
                     <a href="{{ route('contact') }}"
                        id="kira-nav-cta"
                        class="inline-flex items-center justify-center px-5 py-2.5 rounded-full bg-[#0F1E2E] text-white font-bold text-[12.5px] tracking-wide hover:bg-[#193048] active:scale-[0.99] transition-all duration-300 shadow-xs">
-                        VIP Booking →
+                        VIP Booking
                     </a>
 
                     <!-- Mobile Menu Toggle -->
@@ -107,7 +107,7 @@
                     @endforeach
                     <div class="pt-2 mt-2 border-t border-[#E5DEC9] flex items-center justify-end">
                         <a href="{{ route('contact') }}" class="w-full text-center px-4 py-2.5 rounded-full bg-[#C99A49] text-[#0F1E2E] font-bold text-[12.5px]">
-                            Book VIP Appointment →
+                            Book VIP Appointment
                         </a>
                     </div>
                 </div>
@@ -226,7 +226,7 @@
                     // STATE A: DEFAULT TOP (scrollY = 0px, Height 88px, Solid Pearl)
                     navbar.className = 'apple-glass-nav w-full h-[88px] bg-[#F7F4EE]/95 border-b border-[#E5DEC9]/80 transition-all duration-500 ease-[cubic-bezier(0.28,0.11,0.32,1)]';
                     setLightThemeText();
-                    if (glassText) glassText.textContent = 'Scroll → Glass';
+                    if (glassText) glassText.textContent = 'Scroll Glass';
                     if (glassBadge) {
                         glassBadge.className = 'hidden sm:inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white/90 border border-[#E5DEC9] text-[10px] font-bold text-[#5C6877] shadow-2xs hover:border-[#C99A49] transition-all duration-300 cursor-pointer';
                     }

@@ -96,7 +96,7 @@
                                target="_blank"
                                rel="noopener noreferrer"
                                class="font-bold text-[#E6C587] hover:underline">
-                                Buka di Google Maps ↗
+                                Buka di Google Maps
                             </a>
                         </div>
                     </div>
@@ -232,7 +232,7 @@
                         <div class="pt-2">
                             <button type="submit"
                                     class="w-full h-[60px] rounded-full bg-[#0F1E2E] text-white font-sans font-bold text-[15px] tracking-wide hover:bg-[#193048] shadow-lg transition cursor-pointer">
-                                Konfirmasi Janji Temu VIP →
+                                Konfirmasi Janji Temu VIP
                             </button>
                             <p class="mt-3 text-center font-sans text-[12px] text-[#5C6877]">
                                 Data Anda dilindungi kebijakan privasi KIRA Maison de Diamants.
@@ -306,7 +306,7 @@
                             <a id="conf-home-btn"
                                href="{{ route('home') }}"
                                class="h-[52px] px-7 rounded-full {{ $isJustConfirmed ? 'bg-white/10 border border-white/25 text-white hover:bg-white/20' : 'bg-[#FAF8F3] border border-[#D8CEBE] text-[#0F1E2E] hover:border-[#C99A49]' }} font-sans font-bold text-[13.5px] flex items-center justify-center transition">
-                                ← Kembali ke Homepage (Selesai)
+                                Kembali ke Homepage (Selesai)
                             </a>
                         </div>
                     </div>
