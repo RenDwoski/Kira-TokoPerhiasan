@@ -141,65 +141,74 @@
                 <div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-[#0F1E2E] border border-[#C99A49]/60 mb-6">
                     <span class="w-2 h-2 rounded-full bg-[#C99A49]"></span>
                     <span class="font-sans font-bold text-[10.5px] tracking-[0.08em] text-[#E6C587] uppercase">
-                        SECTION 3.3 • DETAIL SPESIFIKASI &amp; SERTIFIKAT GIA
+                        SECTION 3.3 • DETAIL PRODUK 3D &amp; SPESIFIKASI 4C
                     </span>
                 </div>
 
                 <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-10">
 
-                    <!-- Left Column: Main Zoom View & 3 Thumbnails (5 cols, Node 11:660 - 11:690) -->
+                    <!-- Left Column: Interactive 3D Multi-Angle Viewer & 3 Product Angle Thumbnails (5 cols) -->
                     <div class="lg:col-span-5">
-                        <!-- Main Ring Zoom View (4:3) -->
-                        <div class="relative w-full h-[320px] sm:h-[380px] rounded-[22px] overflow-hidden border border-[#E5DEC9] bg-[#122030]">
+                        <!-- Main 3D Interactive Multi-Angle Stage (4:3) -->
+                        <div id="detail-3d-stage"
+                             class="relative w-full h-[320px] sm:h-[380px] rounded-[22px] overflow-hidden border border-[#E5DEC9] bg-[#122030] cursor-grab active:cursor-grabbing select-none touch-pan-y"
+                             style="perspective: 1100px;">
                             <img id="detail-main-image"
-                                 src="{{ $selectedProduct['image'] }}"
-                                 alt="{{ $selectedProduct['name'] }}"
-                                 class="w-full h-full object-cover transition-all duration-500">
+                                 src="{{ $selectedProduct['angles'][0]['src'] }}"
+                                 alt="{{ $selectedProduct['name'] }} — {{ $selectedProduct['angles'][0]['label'] }}"
+                                 draggable="false"
+                                 class="w-full h-full object-cover transition-all duration-500 ease-out will-change-transform">
 
-                            <!-- Floating HUD Chip on Zoom View -->
-                            <div class="apple-hud-chip absolute top-4 left-4 h-[32px] pl-2 pr-3.5 rounded-full border border-[#C99A49]/50 flex items-center gap-2">
-                                <span class="px-2 py-0.5 rounded-full bg-[#C99A49] text-[#0F1E2E] font-sans font-bold text-[9px]">GIA</span>
+                            <!-- Floating HUD Chip: 4C Summary -->
+                            <div class="apple-hud-chip pointer-events-none absolute top-4 left-4 h-[32px] pl-2 pr-3.5 rounded-full border border-[#C99A49]/50 flex items-center gap-2">
+                                <span class="px-2 py-0.5 rounded-full bg-[#C99A49] text-[#0F1E2E] font-sans font-bold text-[9px]">4C</span>
                                 <span id="detail-hud-chip" class="font-sans font-bold text-[11px] text-[#F7F4EE]">
                                     {{ $selectedProduct['color'] }} • {{ $selectedProduct['clarity'] }} • {{ $selectedProduct['carat'] }}
                                 </span>
                             </div>
 
-                            <div class="apple-hud-chip absolute bottom-4 right-4 px-3.5 py-1.5 rounded-full border border-white/15 text-[10.5px] font-bold text-[#E6C587]">
-                                360° Facet &amp; Prong Inspection
+                            <!-- Active Angle 3D HUD Pill -->
+                            <div class="apple-hud-chip pointer-events-none absolute bottom-4 left-4 right-4 px-3.5 py-2 rounded-full border border-white/15 flex items-center justify-between gap-2 text-[10.5px] font-bold">
+                                <span id="detail-angle-label" class="text-[#E6C587]">
+                                    3D Detail • {{ $selectedProduct['angles'][0]['label'] }} ({{ $selectedProduct['angles'][0]['degree'] }})
+                                </span>
+                                <span class="text-[#F7F4EE]/80 hidden sm:inline">
+                                    Geser untuk Putar Sudut
+                                </span>
                             </div>
                         </div>
 
-                        <!-- 3 Thumbnails (THUMB 01, THUMB 02, GIA REPORT) -->
-                        <div class="mt-4 grid grid-cols-3 gap-3.5">
-                            <button type="button"
-                                    data-thumb-index="0"
-                                    class="detail-thumb-btn relative h-[96px] rounded-[16px] overflow-hidden border-2 border-[#C99A49] bg-[#122030] cursor-pointer group">
-                                <img id="detail-thumb-0" src="{{ $selectedProduct['image'] }}" alt="Thumb 01" class="w-full h-full object-cover group-hover:scale-105 transition">
-                                <span class="absolute bottom-1.5 inset-x-1.5 py-0.5 rounded-md bg-[#0F1E2E]/80 text-[9px] font-bold text-white text-center">
-                                     UTAMA (1:1)
-                                </span>
-                            </button>
+                        <!-- 3D Angle Rotation Scrubber Pills -->
+                        <div class="mt-3.5 flex items-center justify-between gap-2 p-1.5 rounded-full bg-[#FAF8F3] border border-[#E5DEC9]">
+                            @foreach ($selectedProduct['angles'] as $aIdx => $angle)
+                                <button type="button"
+                                        data-angle-pill="{{ $aIdx }}"
+                                        class="detail-angle-pill flex-1 py-1.5 px-2.5 rounded-full font-sans font-bold text-[10.5px] tracking-wide transition cursor-pointer {{ $aIdx === 0 ? 'bg-[#0F1E2E] text-[#E6C587] shadow-2xs' : 'text-[#5C6877] hover:text-[#0F1E2E]' }}">
+                                    <span class="angle-pill-text">{{ $angle['short'] }}</span>
+                                </button>
+                            @endforeach
+                        </div>
 
-                            <button type="button"
-                                    data-thumb-index="1"
-                                    class="detail-thumb-btn relative h-[96px] rounded-[16px] overflow-hidden border border-[#E5DEC9] hover:border-[#C99A49] bg-[#122030] cursor-pointer group">
-                                <img id="detail-thumb-1" src="/assets/kira/atelier-diamond-macro.png" alt="Thumb 02 Macro" class="w-full h-full object-cover group-hover:scale-105 transition">
-                                <span class="absolute bottom-1.5 inset-x-1.5 py-0.5 rounded-md bg-[#0F1E2E]/80 text-[9px] font-bold text-[#E6C587] text-center">
-                                    10x LOUPE
-                                </span>
-                            </button>
-
-                            <button type="button"
-                                    id="open-gia-modal-thumb"
-                                    class="relative h-[96px] rounded-[16px] overflow-hidden border border-[#C99A49]/70 bg-[#0F1E2E] hover:bg-[#16293D] flex flex-col items-center justify-center p-2 cursor-pointer transition">
-                                <span class="px-2.5 py-0.5 rounded-full bg-[#C99A49] text-[#0F1E2E] font-sans font-bold text-[10px]">GIA</span>
-                                <span class="mt-1.5 font-sans font-bold text-[10px] text-[#F7F4EE]">GIA REPORT</span>
-                                <span id="detail-thumb-report-num" class="text-[9px] text-[#E6C587]">#{{ $selectedProduct['gia_report'] }}</span>
-                            </button>
+                        <!-- 3 Angle Thumbnails Exclusively for the Selected Product -->
+                        <div class="mt-3.5 grid grid-cols-3 gap-3.5">
+                            @foreach ($selectedProduct['angles'] as $aIdx => $angle)
+                                <button type="button"
+                                        data-thumb-index="{{ $aIdx }}"
+                                        class="detail-thumb-btn relative h-[96px] rounded-[16px] overflow-hidden bg-[#122030] cursor-pointer group transition-all {{ $aIdx === 0 ? 'border-2 border-[#C99A49] shadow-sm' : 'border border-[#E5DEC9] hover:border-[#C99A49]' }}">
+                                    <img id="detail-thumb-{{ $aIdx }}"
+                                         src="{{ $angle['src'] }}"
+                                         alt="{{ $selectedProduct['name'] }} — {{ $angle['label'] }}"
+                                         class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300">
+                                    <span id="detail-thumb-label-{{ $aIdx }}"
+                                          class="absolute bottom-1.5 inset-x-1.5 py-0.5 rounded-md bg-[#0F1E2E]/85 text-[9px] font-bold text-center {{ $aIdx === 0 ? 'text-[#E6C587]' : 'text-white' }}">
+                                        {{ $angle['short'] }}
+                                    </span>
+                                </button>
+                            @endforeach
                         </div>
                     </div>
 
-                    <!-- Right Column: 4C Specification Grid & GIA Certificate Box (7 cols, Node 11:685 - 11:712) -->
+                    <!-- Right Column: 4C Specification Grid & Booking CTAs (7 cols) -->
                     <div class="lg:col-span-7 flex flex-col justify-between">
                         <div>
                             <!-- Product Title & Price Header -->
@@ -219,7 +228,7 @@
                             <p class="mt-2 font-sans font-bold text-[18px] text-[#9E7329]">
                                 <span id="detail-price">{{ $selectedProduct['price_formatted'] }}</span>
                                 <span class="text-[#5C6877] font-normal text-[14px] mx-1.5">•</span>
-                                <span id="detail-report-header" class="text-[#0F1E2E] text-[15px]">GIA Report #{{ $selectedProduct['gia_report'] }}</span>
+                                <span id="detail-short-spec" class="text-[#0F1E2E] text-[15px]">{{ $selectedProduct['short_spec'] }}</span>
                             </p>
 
                             <p id="detail-description" class="mt-4 font-sans text-[14.5px] leading-[1.68] text-[#5C6877]">
@@ -227,7 +236,7 @@
                             </p>
 
                             <!-- 4C Diamond Specification Cards (11:690 - 11:702) -->
-                            <div class="mt-6">
+                            <div class="mt-7">
                                 <h3 class="font-sans font-bold text-[11.5px] tracking-[0.08em] text-[#0F1E2E] uppercase mb-3">
                                     SPESIFIKASI BERLIAN 4C (GIA STANDARD):
                                 </h3>
@@ -255,33 +264,29 @@
                                 </div>
                             </div>
 
-                            <!-- GIA Authenticity Certificate Included Box (11:703 - 11:708) -->
-                            <div class="mt-6 p-5 rounded-[20px] bg-[#FAF8F3] border border-[#C99A49]/65 flex flex-col sm:flex-row items-start sm:items-center gap-4">
-                                <div class="w-[56px] h-[56px] rounded-2xl bg-[#0F1E2E] border border-[#C99A49] flex items-center justify-center shrink-0 font-serif font-bold text-[16px] text-[#E6C587]">
-                                    GIA
+                            <!-- Optical Proportion Highlights (Crown, Pavilion, Refractive Fire) -->
+                            <div class="mt-5 grid grid-cols-3 gap-3">
+                                <div class="px-4 py-3 rounded-[16px] bg-white border border-[#E5DEC9] text-center">
+                                    <p class="font-sans font-bold text-[9.5px] tracking-wider text-[#5C6877] uppercase">CROWN ANGLE</p>
+                                    <p id="detail-crown" class="mt-0.5 font-serif font-bold text-[16px] text-[#0F1E2E]">{{ $selectedProduct['crown_angle'] }}</p>
                                 </div>
-                                <div class="flex-1">
-                                    <h4 class="font-serif font-bold text-[18px] text-[#0F1E2E]">
-                                        GIA Authenticity Certificate Included
-                                    </h4>
-                                    <p id="detail-laser-inscription" class="mt-0.5 font-sans text-[12.5px] text-[#5C6877]">
-                                        Nomor Inskripsi Laser: <strong class="text-[#0F1E2E]">GIA-{{ $selectedProduct['gia_report'] }}</strong> • Terverifikasi Berlian Alami
-                                    </p>
-                                    <button type="button"
-                                            id="open-gia-modal-btn"
-                                            class="mt-1.5 inline-flex items-center gap-1 font-sans font-bold text-[12.5px] text-[#9E7329] hover:text-[#0F1E2E] underline cursor-pointer">
-                                        <span>Lihat &amp; Unduh Salinan Sertifikat GIA (Digital Preview)</span>
-                                    </button>
+                                <div class="px-4 py-3 rounded-[16px] bg-white border border-[#E5DEC9] text-center">
+                                    <p class="font-sans font-bold text-[9.5px] tracking-wider text-[#5C6877] uppercase">PAVILION ANGLE</p>
+                                    <p id="detail-pavilion" class="mt-0.5 font-serif font-bold text-[16px] text-[#0F1E2E]">{{ $selectedProduct['pavilion_angle'] }}</p>
+                                </div>
+                                <div class="px-4 py-3 rounded-[16px] bg-white border border-[#E5DEC9] text-center">
+                                    <p class="font-sans font-bold text-[9.5px] tracking-wider text-[#5C6877] uppercase">OPTICAL FIRE</p>
+                                    <p id="detail-fire" class="mt-0.5 font-serif font-bold text-[15px] text-[#9E7329]">{{ $selectedProduct['refractive_index'] }}</p>
                                 </div>
                             </div>
                         </div>
 
                         <!-- Bottom CTAs: Book Private Viewing & Tanya Concierge (11:709 - 11:712) -->
-                        <div class="mt-7 flex flex-col sm:flex-row items-stretch sm:items-center gap-3.5">
+                        <div class="mt-8 flex flex-col sm:flex-row items-stretch sm:items-center gap-3.5">
                             <a id="detail-book-cta"
                                href="{{ route('contact', ['collection' => $selectedProduct['name']]) }}"
                                class="flex-1 h-[56px] px-7 rounded-full bg-[#0F1E2E] text-white font-sans font-bold text-[14px] flex items-center justify-center hover:bg-[#193048] shadow-md transition">
-                                Book Private Viewing untuk Cincin Ini
+                                Book Private Viewing untuk {{ $selectedProduct['cta_item_label'] ?? 'Koleksi Ini' }}
                             </a>
                             <a href="{{ route('contact') }}"
                                class="h-[56px] px-7 rounded-full bg-white border border-[#C99A49] text-[#0F1E2E] font-sans font-bold text-[14px] flex items-center justify-center hover:bg-[#EFE9DC] transition">
@@ -305,75 +310,6 @@
             </div>
         </div>
     </section>
-
-    <!-- ======================================================================= -->
-    <!-- INTERACTIVE GIA CERTIFICATE PREVIEW MODAL                               -->
-    <!-- ======================================================================= -->
-    <div id="gia-certificate-modal" class="fixed inset-0 z-50 hidden items-center justify-center bg-[#0F1E2E]/75 backdrop-blur-md p-4">
-        <div class="bg-[#F7F4EE] border-2 border-[#C99A49] rounded-[28px] max-w-[680px] w-full p-6 sm:p-8 shadow-2xl relative">
-            <button type="button" id="close-gia-modal" class="absolute top-5 right-5 w-9 h-9 rounded-full bg-white border border-[#D8CEBE] flex items-center justify-center text-[#0F1E2E] font-bold hover:border-[#C99A49] cursor-pointer">
-                ✕
-            </button>
-
-            <div class="flex items-center gap-3">
-                <span class="px-3 py-1 rounded-full bg-[#0F1E2E] text-[#E6C587] font-sans font-bold text-[10px] tracking-wider uppercase">
-                    GIA NATURAL DIAMOND DOSSIER®
-                </span>
-                <span id="modal-gia-number" class="font-sans font-bold text-[12px] text-[#9E7329]">
-                    Report #{{ $selectedProduct['gia_report'] }}
-                </span>
-            </div>
-
-            <h3 id="modal-gia-title" class="mt-3 font-serif font-bold text-[26px] text-[#0F1E2E]">
-                {{ $selectedProduct['name'] }}
-            </h3>
-            <p class="font-sans text-[13px] text-[#5C6877]">
-                Gemological Institute of America • Laser Inscription Registry Verified by KIRA Maison de Diamants
-            </p>
-
-            <div class="mt-5 p-5 rounded-[20px] bg-white border border-[#E5DEC9] space-y-3 text-[13px]">
-                <div class="flex justify-between py-1.5 border-b border-[#EFE9DC]">
-                    <span class="text-[#5C6877]">GIA Report Number</span>
-                    <span id="modal-row-report" class="font-bold text-[#0F1E2E]">{{ $selectedProduct['gia_report'] }}</span>
-                </div>
-                <div class="flex justify-between py-1.5 border-b border-[#EFE9DC]">
-                    <span class="text-[#5C6877]">Cutting Style &amp; Architecture</span>
-                    <span class="font-bold text-[#0F1E2E]">58-Facet Round Brilliant / Lotus Crown</span>
-                </div>
-                <div class="flex justify-between py-1.5 border-b border-[#EFE9DC]">
-                    <span class="text-[#5C6877]">Carat Weight</span>
-                    <span id="modal-row-carat" class="font-bold text-[#0F1E2E]">{{ $selectedProduct['carat'] }}</span>
-                </div>
-                <div class="flex justify-between py-1.5 border-b border-[#EFE9DC]">
-                    <span class="text-[#5C6877]">Color Grade</span>
-                    <span id="modal-row-color" class="font-bold text-[#0F1E2E]">{{ $selectedProduct['color'] }}</span>
-                </div>
-                <div class="flex justify-between py-1.5 border-b border-[#EFE9DC]">
-                    <span class="text-[#5C6877]">Clarity Grade</span>
-                    <span id="modal-row-clarity" class="font-bold text-[#0F1E2E]">{{ $selectedProduct['clarity'] }}</span>
-                </div>
-                <div class="flex justify-between py-1.5 border-b border-[#EFE9DC]">
-                    <span class="text-[#5C6877]">Cut / Polish / Symmetry</span>
-                    <span id="modal-row-cut" class="font-bold text-[#9E7329]">{{ $selectedProduct['cut'] }} • Triple Excellent</span>
-                </div>
-                <div class="flex justify-between py-1.5">
-                    <span class="text-[#5C6877]">Girdle Laser Inscription</span>
-                    <span id="modal-row-laser" class="font-mono font-bold text-[#0F1E2E]">GIA {{ $selectedProduct['gia_report'] }} &bull; KIRA 18K</span>
-                </div>
-            </div>
-
-            <div class="mt-6 flex flex-wrap items-center justify-end gap-3">
-                <button type="button" onclick="window.print()" class="px-5 py-2.5 rounded-full bg-white border border-[#C99A49] text-[#0F1E2E] font-sans font-bold text-[12.5px] hover:bg-[#EFE9DC] cursor-pointer">
-                    Cetak / Simpan PDF Sertifikat
-                </button>
-                <a id="modal-book-btn"
-                   href="{{ route('contact', ['collection' => $selectedProduct['name']]) }}"
-                   class="px-6 py-2.5 rounded-full bg-[#0F1E2E] text-white font-sans font-bold text-[12.5px] hover:bg-[#193048]">
-                    Verifikasi Langsung di Butik (VIP Booking)
-                </a>
-            </div>
-        </div>
-    </div>
 @endsection
 
 @push('scripts')
@@ -384,75 +320,133 @@
         productsData.forEach(p => { productMap[p.id] = p; });
 
         let currentProduct = productMap[@json($selectedProduct['id'])] || productsData[0];
+        let currentAngleIndex = 0;
 
         // Elements to update in Section 3.3
+        const stage3d = document.getElementById('detail-3d-stage');
         const mainImg = document.getElementById('detail-main-image');
-        const thumb0 = document.getElementById('detail-thumb-0');
-        const thumb1 = document.getElementById('detail-thumb-1');
-        const thumbReportNum = document.getElementById('detail-thumb-report-num');
+        const angleLabel = document.getElementById('detail-angle-label');
         const hudChip = document.getElementById('detail-hud-chip');
         const eyebrow = document.getElementById('detail-eyebrow');
         const metalSpec = document.getElementById('detail-metal-spec');
         const title = document.getElementById('detail-title');
         const price = document.getElementById('detail-price');
-        const reportHeader = document.getElementById('detail-report-header');
+        const shortSpec = document.getElementById('detail-short-spec');
         const description = document.getElementById('detail-description');
         const carat = document.getElementById('detail-carat');
         const color = document.getElementById('detail-color');
         const clarity = document.getElementById('detail-clarity');
         const cut = document.getElementById('detail-cut');
-        const laserInscription = document.getElementById('detail-laser-inscription');
+        const crown = document.getElementById('detail-crown');
+        const pavilion = document.getElementById('detail-pavilion');
+        const fire = document.getElementById('detail-fire');
         const bookCta = document.getElementById('detail-book-cta');
 
-        // Modal Elements
-        const giaModal = document.getElementById('gia-certificate-modal');
-        const modalGiaNumber = document.getElementById('modal-gia-number');
-        const modalGiaTitle = document.getElementById('modal-gia-title');
-        const modalRowReport = document.getElementById('modal-row-report');
-        const modalRowCarat = document.getElementById('modal-row-carat');
-        const modalRowColor = document.getElementById('modal-row-color');
-        const modalRowClarity = document.getElementById('modal-row-clarity');
-        const modalRowCut = document.getElementById('modal-row-cut');
-        const modalRowLaser = document.getElementById('modal-row-laser');
-        const modalBookBtn = document.getElementById('modal-book-btn');
+        function setAngle(index, animateTilt = true) {
+            const angles = currentProduct.angles || [];
+            if (!angles.length) return;
+            const safeIdx = ((index % angles.length) + angles.length) % angles.length;
+            const direction = safeIdx > currentAngleIndex ? 1 : (safeIdx < currentAngleIndex ? -1 : 0);
+            currentAngleIndex = safeIdx;
+
+            const angle = angles[safeIdx];
+
+            if (mainImg && angle) {
+                if (animateTilt && direction !== 0) {
+                    mainImg.style.opacity = '0.78';
+                    mainImg.style.transform = `rotateY(${direction * 10}deg) scale(1.03)`;
+                    setTimeout(() => {
+                        mainImg.src = angle.src;
+                        mainImg.alt = `${currentProduct.name} — ${angle.label}`;
+                        mainImg.style.opacity = '1';
+                        mainImg.style.transform = 'rotateY(0deg) scale(1)';
+                    }, 120);
+                } else {
+                    mainImg.src = angle.src;
+                    mainImg.alt = `${currentProduct.name} — ${angle.label}`;
+                    mainImg.style.opacity = '1';
+                    mainImg.style.transform = 'rotateY(0deg) scale(1)';
+                }
+            }
+
+            if (angleLabel && angle) {
+                angleLabel.textContent = `3D Detail • ${angle.label} (${angle.degree})`;
+            }
+
+            // Sync thumbnail active borders & badge colors
+            document.querySelectorAll('.detail-thumb-btn').forEach(btn => {
+                const idx = parseInt(btn.getAttribute('data-thumb-index'), 10);
+                const labelEl = document.getElementById(`detail-thumb-label-${idx}`);
+                if (idx === safeIdx) {
+                    btn.classList.remove('border', 'border-[#E5DEC9]');
+                    btn.classList.add('border-2', 'border-[#C99A49]', 'shadow-sm');
+                    if (labelEl) {
+                        labelEl.classList.remove('text-white');
+                        labelEl.classList.add('text-[#E6C587]');
+                    }
+                } else {
+                    btn.classList.remove('border-2', 'border-[#C99A49]', 'shadow-sm');
+                    btn.classList.add('border', 'border-[#E5DEC9]');
+                    if (labelEl) {
+                        labelEl.classList.remove('text-[#E6C587]');
+                        labelEl.classList.add('text-white');
+                    }
+                }
+            });
+
+            // Sync 3D angle scrubber pills
+            document.querySelectorAll('.detail-angle-pill').forEach(pill => {
+                const idx = parseInt(pill.getAttribute('data-angle-pill'), 10);
+                if (idx === safeIdx) {
+                    pill.className = 'detail-angle-pill flex-1 py-1.5 px-2.5 rounded-full font-sans font-bold text-[10.5px] tracking-wide transition cursor-pointer bg-[#0F1E2E] text-[#E6C587] shadow-2xs';
+                } else {
+                    pill.className = 'detail-angle-pill flex-1 py-1.5 px-2.5 rounded-full font-sans font-bold text-[10.5px] tracking-wide transition cursor-pointer text-[#5C6877] hover:text-[#0F1E2E]';
+                }
+            });
+        }
 
         function selectProduct(productId, shouldScroll = true) {
             const p = productMap[productId];
             if (!p) return;
             currentProduct = p;
 
-            // Update Section 3.3 DOM
-            if (mainImg) mainImg.src = p.image;
-            if (thumb0) thumb0.src = p.image;
-            if (thumb1) thumb1.src = (p.secondary_images && p.secondary_images[1]) ? p.secondary_images[1] : '/assets/kira/atelier-diamond-macro.png';
-            if (thumbReportNum) thumbReportNum.textContent = '#' + p.gia_report;
+            // Update all 3 angle thumbnails strictly to this single selected product
+            (p.angles || []).forEach((angle, idx) => {
+                const thumbImg = document.getElementById(`detail-thumb-${idx}`);
+                const thumbLabel = document.getElementById(`detail-thumb-label-${idx}`);
+                const pillEl = document.querySelector(`[data-angle-pill="${idx}"] .angle-pill-text`);
+                if (thumbImg) {
+                    thumbImg.src = angle.src;
+                    thumbImg.alt = `${p.name} — ${angle.label}`;
+                }
+                if (thumbLabel) thumbLabel.textContent = angle.short;
+                if (pillEl) pillEl.textContent = angle.short;
+            });
+
+            // Reset to Front 0° angle for newly selected product
+            setAngle(0, false);
+
+            // Update Section 3.3 textual specs
             if (hudChip) hudChip.textContent = `${p.color} • ${p.clarity} • ${p.carat}`;
             if (eyebrow) eyebrow.textContent = p.eyebrow;
             if (metalSpec) metalSpec.textContent = p.metal_spec;
             if (title) title.textContent = `${p.name} — ${p.carat}`;
             if (price) price.textContent = p.price_formatted;
-            if (reportHeader) reportHeader.textContent = `GIA Report #${p.gia_report}`;
+            if (shortSpec) shortSpec.textContent = p.short_spec;
             if (description) description.textContent = p.description;
             if (carat) carat.textContent = p.carat;
             if (color) color.textContent = p.color;
             if (clarity) clarity.textContent = p.clarity;
             if (cut) cut.textContent = p.cut;
-            if (laserInscription) {
-                laserInscription.innerHTML = `Nomor Inskripsi Laser: <strong class="text-[#0F1E2E]">GIA-${p.gia_report}</strong> • Terverifikasi Berlian Alami`;
-            }
-            const contactUrl = `{{ route('contact') }}?collection=${encodeURIComponent(p.name)}`;
-            if (bookCta) bookCta.href = contactUrl;
+            if (crown) crown.textContent = p.crown_angle;
+            if (pavilion) pavilion.textContent = p.pavilion_angle;
+            if (fire) fire.textContent = p.refractive_index;
 
-            // Update Modal
-            if (modalGiaNumber) modalGiaNumber.textContent = `Report #${p.gia_report}`;
-            if (modalGiaTitle) modalGiaTitle.textContent = p.name;
-            if (modalRowReport) modalRowReport.textContent = p.gia_report;
-            if (modalRowCarat) modalRowCarat.textContent = p.carat;
-            if (modalRowColor) modalRowColor.textContent = p.color;
-            if (modalRowClarity) modalRowClarity.textContent = p.clarity;
-            if (modalRowCut) modalRowCut.textContent = `${p.cut} • Triple Excellent`;
-            if (modalRowLaser) modalRowLaser.textContent = `GIA ${p.gia_report} • KIRA 18K`;
-            if (modalBookBtn) modalBookBtn.href = contactUrl;
+            const contactUrl = `{{ route('contact') }}?collection=${encodeURIComponent(p.name)}`;
+            if (bookCta) {
+                bookCta.href = contactUrl;
+                bookCta.textContent = `Book Private Viewing untuk ${p.cta_item_label || 'Koleksi Ini'}`;
+            }
 
             if (shouldScroll) {
                 document.getElementById('gia-specs')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
@@ -466,26 +460,55 @@
             });
         });
 
-        // Thumbnails switcher
+        // Thumbnail click -> switch angle
         document.querySelectorAll('.detail-thumb-btn').forEach(btn => {
             btn.addEventListener('click', () => {
                 const idx = parseInt(btn.getAttribute('data-thumb-index'), 10);
-                document.querySelectorAll('.detail-thumb-btn').forEach(b => {
-                    b.classList.remove('border-2', 'border-[#C99A49]');
-                    b.classList.add('border', 'border-[#E5DEC9]');
-                });
-                btn.classList.remove('border', 'border-[#E5DEC9]');
-                btn.classList.add('border-2', 'border-[#C99A49]');
-
-                if (idx === 0 && mainImg) {
-                    mainImg.src = currentProduct.image;
-                } else if (idx === 1 && mainImg) {
-                    mainImg.src = (currentProduct.secondary_images && currentProduct.secondary_images[1])
-                        ? currentProduct.secondary_images[1]
-                        : '/assets/kira/atelier-diamond-macro.png';
-                }
+                setAngle(idx, true);
             });
         });
+
+        // 3D Angle pill click -> switch angle
+        document.querySelectorAll('.detail-angle-pill').forEach(pill => {
+            pill.addEventListener('click', () => {
+                const idx = parseInt(pill.getAttribute('data-angle-pill'), 10);
+                setAngle(idx, true);
+            });
+        });
+
+        // Interactive 3D Drag-to-Rotate on Main Stage
+        if (stage3d && mainImg) {
+            let isDragging = false;
+            let startX = 0;
+
+            stage3d.addEventListener('pointerdown', (e) => {
+                isDragging = true;
+                startX = e.clientX;
+                stage3d.setPointerCapture(e.pointerId);
+            });
+
+            stage3d.addEventListener('pointermove', (e) => {
+                if (!isDragging) return;
+                const deltaX = e.clientX - startX;
+                const clampedTilt = Math.max(-12, Math.min(12, deltaX / 6));
+                mainImg.style.transform = `rotateY(${clampedTilt}deg) scale(1.02)`;
+
+                if (Math.abs(deltaX) >= 55) {
+                    const step = deltaX > 0 ? 1 : -1;
+                    startX = e.clientX;
+                    setAngle(currentAngleIndex + step, true);
+                }
+            });
+
+            const endDrag = () => {
+                if (!isDragging) return;
+                isDragging = false;
+                mainImg.style.transform = 'rotateY(0deg) scale(1)';
+            };
+
+            stage3d.addEventListener('pointerup', endDrag);
+            stage3d.addEventListener('pointercancel', endDrag);
+        }
 
         // Filter Category Buttons
         const filterBtns = document.querySelectorAll('[data-catalog-filter]');
@@ -526,26 +549,6 @@
                 cards.forEach(c => catalogGrid.appendChild(c));
             });
         }
-
-        // GIA Modal open/close
-        function openGiaModal() {
-            if (giaModal) {
-                giaModal.classList.remove('hidden');
-                giaModal.classList.add('flex');
-            }
-        }
-        function closeGiaModal() {
-            if (giaModal) {
-                giaModal.classList.add('hidden');
-                giaModal.classList.remove('flex');
-            }
-        }
-        document.getElementById('open-gia-modal-btn')?.addEventListener('click', openGiaModal);
-        document.getElementById('open-gia-modal-thumb')?.addEventListener('click', openGiaModal);
-        document.getElementById('close-gia-modal')?.addEventListener('click', closeGiaModal);
-        giaModal?.addEventListener('click', (e) => {
-            if (e.target === giaModal) closeGiaModal();
-        });
 
         // Support client-side ?item= and ?category= query params (for static GitHub Pages)
         const urlParams = new URLSearchParams(window.location.search);
