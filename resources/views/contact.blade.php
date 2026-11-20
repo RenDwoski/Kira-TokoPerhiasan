@@ -248,20 +248,20 @@
     <!-- ======================================================================= -->
     <!-- SECTION 5.3: THE FINAL INTERACTION / KONFIRMASI SUKSES (Node 11:982)    -->
     <!-- ======================================================================= -->
-    <section id="vip-confirmation-section" class="pb-14 scroll-mt-24">
+    @php
+        $conf = $bookingConfirmation ?? [
+            'code' => '#KIRA-VIP-2026-089',
+            'full_name' => 'Tamu Kehormatan KIRA',
+            'collection' => 'The Lotus Crown Solitaire (1.50 Ct)',
+            'gia_report' => '226789104',
+            'visit_date' => 'Sabtu, 14 November 2026',
+            'time_slot' => '14:00 WIB',
+            'location' => 'KIRA Flagship Boutique, Plaza Indonesia Level 1 #108',
+        ];
+        $isJustConfirmed = !empty($bookingConfirmation) || request()->has('confirmed');
+    @endphp
+    <section id="vip-confirmation-section" class="{{ $isJustConfirmed ? '' : 'hidden' }} pb-14 scroll-mt-24">
         <div class="max-w-[1440px] mx-auto px-6 md:px-12 lg:px-[120px]">
-            @php
-                $conf = $bookingConfirmation ?? [
-                    'code' => '#KIRA-VIP-2026-089',
-                    'full_name' => 'Tamu Kehormatan KIRA',
-                    'collection' => 'The Lotus Crown Solitaire (1.50 Ct)',
-                    'gia_report' => '226789104',
-                    'visit_date' => 'Sabtu, 14 November 2026',
-                    'time_slot' => '14:00 WIB',
-                    'location' => 'KIRA Flagship Boutique, Plaza Indonesia Level 1 #108',
-                ];
-                $isJustConfirmed = !empty($bookingConfirmation) || request()->has('confirmed');
-            @endphp
 
             <div id="vip-confirmation-card" class="rounded-[28px] {{ $isJustConfirmed ? 'bg-[#0F1E2E] text-white border-2 border-[#C99A49] ring-4 ring-[#C99A49]/25' : 'bg-white text-[#0F1E2E] border-2 border-[#C99A49]/75' }} p-7 sm:p-10 shadow-xl transition-all">
 
@@ -438,7 +438,11 @@
                     confHomeBtn.className = 'h-[52px] px-7 rounded-full bg-white/10 border border-white/25 text-white hover:bg-white/20 font-sans font-bold text-[13.5px] flex items-center justify-center transition';
                 }
 
-                document.getElementById('vip-confirmation-section')?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                const confSection = document.getElementById('vip-confirmation-section');
+                if (confSection) {
+                    confSection.classList.remove('hidden');
+                    confSection.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                }
             });
         }
 
