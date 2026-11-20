@@ -129,7 +129,7 @@
                         <div class="mt-5">
                             <button type="button"
                                     data-select-product="{{ $product['id'] }}"
-                                    class="select-product-btn w-full h-[44px] rounded-full font-sans font-bold text-[12.5px] flex items-center justify-center transition cursor-pointer {{ $isSelected ? 'bg-[#0F1E2E] text-white' : 'bg-[#FAF8F3] border border-[#D8CEBE] text-[#0F1E2E] hover:bg-[#EFE9DC] hover:border-[#C99A49]' }}">
+                                    class="select-product-btn w-full h-[44px] rounded-full font-sans font-bold text-[12.5px] flex items-center justify-center transition cursor-pointer {{ $isSelected ? 'bg-[#FAF8F3] border border-[#C99A49] text-[#0F1E2E] hover:bg-[#EFE9DC]' : 'bg-[#FAF8F3] border border-[#D8CEBE] text-[#0F1E2E] hover:bg-[#EFE9DC] hover:border-[#C99A49]' }}">
                                 <span class="btn-label">{{ $isSelected ? '✓ Lihat Spesifikasi 4C di Bawah' : 'Pilih & Cek Spesifikasi 4C' }}</span>
                             </button>
                         </div>
@@ -474,7 +474,7 @@
                     card.classList.remove('bento-card');
                     card.classList.add('bento-card-featured');
                     if (chip) { chip.classList.remove('hidden'); chip.classList.add('flex'); }
-                    if (btn) btn.className = 'select-product-btn w-full h-[44px] rounded-full font-sans font-bold text-[12.5px] flex items-center justify-center transition cursor-pointer bg-[#0F1E2E] text-white';
+                    if (btn) btn.className = 'select-product-btn w-full h-[44px] rounded-full font-sans font-bold text-[12.5px] flex items-center justify-center transition cursor-pointer bg-[#FAF8F3] border border-[#C99A49] text-[#0F1E2E] hover:bg-[#EFE9DC]';
                     if (label) label.textContent = '✓ Lihat Spesifikasi 4C di Bawah';
                 } else {
                     card.classList.remove('bento-card-featured');

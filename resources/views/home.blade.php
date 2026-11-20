@@ -286,17 +286,10 @@
 
                         <!-- Bottom Action Button -->
                         <div class="mt-5">
-                            @if ($product['featured_primary'])
-                                <a href="{{ route('products', ['item' => $product['id']]) }}#gia-specs"
-                                   class="w-full h-[46px] rounded-full bg-[#0F1E2E] text-white font-sans font-bold text-[12.5px] flex items-center justify-center hover:bg-[#193048] transition">
-                                    Lihat Detail Produk &amp; 4C
-                                </a>
-                            @else
-                                <a href="{{ route('products', ['item' => $product['id']]) }}#gia-specs"
-                                   class="w-full h-[46px] rounded-full bg-[#FAF8F3] border border-[#D8CEBE] text-[#0F1E2E] font-sans font-bold text-[12.5px] flex items-center justify-center hover:bg-[#EFE9DC] hover:border-[#C99A49] transition">
-                                    Lihat Detail Produk &amp; 4C
-                                </a>
-                            @endif
+                            <a href="{{ route('products', ['item' => $product['id']]) }}#gia-specs"
+                               class="w-full h-[46px] rounded-full bg-[#FAF8F3] border border-[#D8CEBE] text-[#0F1E2E] font-sans font-bold text-[12.5px] flex items-center justify-center hover:bg-[#EFE9DC] hover:border-[#C99A49] transition">
+                                Lihat Detail Produk &amp; 4C
+                            </a>
                         </div>
                     </article>
                 @endforeach
