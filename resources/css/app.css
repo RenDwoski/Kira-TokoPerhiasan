@@ -1,0 +1,75 @@
+@import 'tailwindcss';
+
+@source '../../vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php';
+@source '../../storage/framework/views/*.php';
+@source '../views/**/*.blade.php';
+@source '../js/**/*.js';
+
+@theme {
+    --font-sans: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'SF Pro Text', ui-sans-serif, system-ui, sans-serif;
+    --font-serif: 'Playfair Display', 'Cormorant Garamond', ui-serif, Georgia, serif;
+
+    --color-kira-pearl: #F7F4EE;
+    --color-kira-pearl-soft: #EFEAE0;
+    --color-kira-sapphire: #0F1E2E;
+    --color-kira-sapphire-mid: #243B53;
+    --color-kira-slate: #5C6877;
+    --color-kira-ice: #DCE6F2;
+    --color-kira-gold: #C99A49;
+    --color-kira-gold-deep: #9E7329;
+    --color-kira-gold-light: #E6C587;
+    --color-kira-border: #E5DEC9;
+}
+
+@layer base {
+    html {
+        scroll-behavior: smooth;
+        background-color: #F7F4EE;
+        color: #0F1E2E;
+        font-family: var(--font-sans);
+    }
+}
+
+/* Apple Liquid Glass & Custom Utilities */
+.apple-glass-nav {
+    transition: all 0.42s cubic-bezier(0.28, 0.11, 0.32, 1);
+}
+
+.apple-glass-scrolled {
+    background-color: rgba(247, 244, 238, 0.75);
+    backdrop-filter: saturate(190%) blur(24px);
+    -webkit-backdrop-filter: saturate(190%) blur(24px);
+    box-shadow: 0 10px 30px -10px rgba(15, 30, 46, 0.08), inset 0 1px 0 0 rgba(255, 255, 255, 0.7);
+}
+
+.apple-glass-dark {
+    background-color: rgba(15, 30, 46, 0.84) !important;
+    backdrop-filter: saturate(190%) blur(24px);
+    -webkit-backdrop-filter: saturate(190%) blur(24px);
+    box-shadow: 0 14px 36px -10px rgba(15, 30, 46, 0.35), inset 0 1px 0 0 rgba(230, 197, 135, 0.25);
+}
+
+.apple-hud-chip {
+    background-color: rgba(15, 30, 46, 0.82);
+    backdrop-filter: saturate(180%) blur(16px);
+    -webkit-backdrop-filter: saturate(180%) blur(16px);
+}
+
+.bento-card {
+    background: #FFFFFF;
+    border: 1px solid #E5DEC9;
+    border-radius: 24px;
+    transition: transform 0.35s cubic-bezier(0.28, 0.11, 0.32, 1), box-shadow 0.35s cubic-bezier(0.28, 0.11, 0.32, 1), border-color 0.35s ease;
+}
+
+.bento-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 20px 40px -15px rgba(15, 30, 46, 0.08);
+}
+
+.bento-card-featured {
+    background: #FFFFFF;
+    border: 1.5px solid #C99A49;
+    border-radius: 24px;
+    box-shadow: 0 16px 36px -12px rgba(201, 154, 73, 0.16);
+}
