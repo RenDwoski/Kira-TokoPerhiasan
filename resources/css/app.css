@@ -73,3 +73,55 @@
     border-radius: 24px;
     box-shadow: 0 16px 36px -12px rgba(201, 154, 73, 0.16);
 }
+
+/* Luxury Diamond Angle Range Scrubber (Cross-browser consistent) */
+.kira-angle-slider {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 100%;
+    height: 6px;
+    border-radius: 9999px;
+    background: linear-gradient(90deg, #C99A49 0%, #E6C587 var(--slider-pct, 0%), #E5DEC9 var(--slider-pct, 0%), #E5DEC9 100%);
+    outline: none;
+    cursor: pointer;
+}
+
+.kira-angle-slider::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 20px;
+    height: 20px;
+    border-radius: 9999px;
+    background: #0F1E2E;
+    border: 2.5px solid #C99A49;
+    box-shadow: 0 4px 12px rgba(15, 30, 46, 0.25);
+    cursor: grab;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.kira-angle-slider::-webkit-slider-thumb:hover {
+    transform: scale(1.12);
+    box-shadow: 0 6px 16px rgba(201, 154, 73, 0.4);
+}
+
+.kira-angle-slider::-moz-range-thumb {
+    width: 20px;
+    height: 20px;
+    border-radius: 9999px;
+    background: #0F1E2E;
+    border: 2.5px solid #C99A49;
+    box-shadow: 0 4px 12px rgba(15, 30, 46, 0.25);
+    cursor: grab;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.kira-angle-slider::-moz-range-track {
+    height: 6px;
+    border-radius: 9999px;
+    background: transparent;
+}
+
+.kira-3d-stage {
+    perspective: 1200px;
+    transform-style: preserve-3d;
+}
