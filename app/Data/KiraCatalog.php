@@ -297,7 +297,7 @@ class KiraCatalog
         return [
             [
                 'question' => 'Apakah sesi Private Viewing dikenakan biaya reservasi?',
-                'answer' => 'Sesi Private Viewing di KIRA Flagship Boutique (Plaza Indonesia Level 1 #108) sepenuhnya gratis dan tanpa kewajiban pembelian. Anda akan didampingi secara eksklusif 1-on-1 oleh Gemologist bersertifikat GIA selama 60 menit di ruang salon privat kami.',
+                'answer' => 'Sesi Private Viewing di KIRA Flagship Boutique (Plaza Indonesia Level 1) sepenuhnya gratis dan tanpa kewajiban pembelian. Anda akan didampingi secara eksklusif 1-on-1 oleh Gemologist bersertifikat GIA selama 60 menit di ruang salon privat kami.',
             ],
             [
                 'question' => 'Apakah saya dapat memeriksa inskripsi laser GIA dengan mikroskop di butik?',

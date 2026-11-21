@@ -15,7 +15,7 @@
                 Hubungi Kami &amp; Reservasi Private Viewing VIP
             </h1>
             <p class="mt-3 font-sans text-[14.5px] text-[#5C6877] max-w-[680px] mx-auto leading-relaxed">
-                Jadwalkan sesi konsultasi privat 1-on-1 bersama Gemologist bersertifikat GIA di KIRA Flagship Boutique, Plaza Indonesia Level 1 #108.
+                Jadwalkan sesi konsultasi privat 1-on-1 bersama Gemologist bersertifikat GIA di KIRA Flagship Boutique, Plaza Indonesia Level 1.
             </p>
         </div>
     </section>
@@ -38,7 +38,7 @@
                             KIRA Plaza Indonesia
                         </h2>
                         <p class="mt-1 font-sans font-medium text-[14.5px] text-[#5C6877]">
-                            Level 1, Suite #108 • Jakarta Pusat
+                            Level 1 • Jakarta Pusat
                         </p>
 
                         <hr class="my-6 border-[#E5DEC9]">
@@ -61,41 +61,39 @@
                         </div>
                     </div>
 
-                    <!-- Interactive Boutique Map Card (11:946 - 11:952) -->
-                    <div class="mt-8 relative h-[320px] sm:h-[360px] rounded-[20px] overflow-hidden border border-[#C99A49]/60 bg-[#0F1E2E] p-5 flex flex-col justify-between">
-                        <!-- Stylized Map Grid Background -->
-                        <div class="pointer-events-none absolute inset-0 opacity-20"
-                             style="background-image: radial-gradient(#C99A49 1px, transparent 1px), linear-gradient(to right, #243B53 1px, transparent 1px), linear-gradient(to bottom, #243B53 1px, transparent 1px); background-size: 24px 24px, 48px 48px, 48px 48px;"></div>
+                    <!-- Real Interactive Google Maps Embed Card -->
+                    <div class="mt-8 rounded-[20px] overflow-hidden border border-[#C99A49]/60 bg-[#0F1E2E] shadow-sm flex flex-col">
+                        <div class="relative w-full h-[250px] sm:h-[280px] bg-[#EFECE4]">
+                            <iframe
+                                title="Peta Lokasi KIRA Flagship Boutique — Plaza Indonesia Jakarta"
+                                src="https://www.google.com/maps?q=Plaza+Indonesia,+Jl.+M.H.+Thamrin+Kav.+28-30,+Jakarta+Pusat&hl=id&z=16&output=embed"
+                                class="w-full h-full border-0"
+                                loading="lazy"
+                                referrerpolicy="no-referrer-when-downgrade"
+                                allowfullscreen>
+                            </iframe>
 
-                        <div class="relative z-10 flex items-center justify-between">
-                            <span class="px-3 py-1 rounded-full bg-white/10 border border-[#C99A49]/50 font-sans font-bold text-[9.5px] text-[#E6C587] uppercase">
-                                ✦ PLAZA INDONESIA • CENTRAL JAKARTA
-                            </span>
-                            <span class="text-[11px] font-bold text-[#DCE6F2]">VIP Valet Drop-Off</span>
-                        </div>
-
-                        <!-- Center Map Pin Marker -->
-                        <div class="relative z-10 my-auto flex flex-col items-center text-center">
-                            <div class="w-14 h-14 rounded-full bg-[#C99A49]/25 border border-[#C99A49] flex items-center justify-center animate-pulse">
-                                <div class="w-9 h-9 rounded-full bg-[#C99A49] text-[#0F1E2E] font-serif font-bold text-[15px] flex items-center justify-center shadow-lg">
-                                    K
-                                </div>
+                            <div class="pointer-events-none absolute top-3 left-3 z-10 px-3 py-1 rounded-full bg-[#0F1E2E]/88 backdrop-blur-md border border-[#C99A49]/60 shadow-md">
+                                <span class="font-sans font-bold text-[9.5px] tracking-wider text-[#E6C587] uppercase">
+                                    ✦ PLAZA INDONESIA • CENTRAL JAKARTA
+                                </span>
                             </div>
-                            <span class="mt-2.5 px-4 py-1.5 rounded-full bg-[#0F1E2E]/90 border border-[#C99A49] font-sans font-bold text-[11px] text-white shadow-md">
-                                KIRA Flagship Boutique • Level 1 #108
-                            </span>
-                            <span class="mt-1.5 text-[11.5px] text-[#DCE6F2]">
-                                Jl. M.H. Thamrin Kav. 28-30, Gondangdia, Menteng
-                            </span>
                         </div>
 
-                        <!-- Map Footer Action -->
-                        <div class="relative z-10 flex items-center justify-between pt-3 border-t border-white/15 text-[11.5px]">
-                            <span class="text-[#DCE6F2]">Akses Privat Lobby Timur (VIP Valet)</span>
-                            <a href="https://maps.google.com/?q=Plaza+Indonesia+Jakarta"
+                        <!-- Map Footer Address & Direct Link -->
+                        <div class="px-4 py-3.5 bg-[#0F1E2E] border-t border-white/10 flex flex-wrap items-center justify-between gap-2 text-[11.5px]">
+                            <div class="min-w-0">
+                                <p class="font-sans font-bold text-white truncate">
+                                    KIRA Flagship Boutique • Plaza Indonesia Level 1
+                                </p>
+                                <p class="font-sans text-[11px] text-[#DCE6F2]/85 truncate">
+                                    Jl. M.H. Thamrin Kav. 28-30, Gondangdia, Menteng
+                                </p>
+                            </div>
+                            <a href="https://maps.google.com/?q=Plaza+Indonesia,+Jl.+M.H.+Thamrin+Kav.+28-30,+Jakarta+Pusat"
                                target="_blank"
                                rel="noopener noreferrer"
-                               class="font-bold text-[#E6C587] hover:underline">
+                               class="shrink-0 px-3.5 py-1.5 rounded-full bg-[#C99A49]/15 border border-[#C99A49]/60 font-sans font-bold text-[11px] text-[#E6C587] hover:bg-[#C99A49] hover:text-[#0F1E2E] transition">
                                 Buka di Google Maps
                             </a>
                         </div>
@@ -250,13 +248,13 @@
     <!-- ======================================================================= -->
     @php
         $conf = $bookingConfirmation ?? [
-            'code' => '#KIRA-VIP-2026-089',
+            'code' => 'KIRA-VIP-2026-089',
             'full_name' => 'Tamu Kehormatan KIRA',
             'collection' => 'The Lotus Crown Solitaire (1.50 Ct)',
             'gia_report' => '226789104',
             'visit_date' => 'Sabtu, 14 November 2026',
             'time_slot' => '14:00 WIB',
-            'location' => 'KIRA Flagship Boutique, Plaza Indonesia Level 1 #108',
+            'location' => 'KIRA Flagship Boutique, Plaza Indonesia Level 1',
         ];
         $isJustConfirmed = !empty($bookingConfirmation) || request()->has('confirmed');
     @endphp
@@ -293,7 +291,7 @@
                             Lokasi: {{ $conf['location'] }} • Koleksi: <strong id="conf-collection">{{ $conf['collection'] }}</strong>
                         </p>
                         <p id="conf-note-row" class="mt-1.5 font-sans text-[13px] {{ $isJustConfirmed ? 'text-[#DCE6F2]/85' : 'text-[#5C6877]' }}">
-                            E-Invitation resmi beserta salinan Sertifikat GIA #<span id="conf-gia">{{ $conf['gia_report'] }}</span> telah disiapkan untuk sesi inspeksi mikroskop 10x Anda.
+                            E-Invitation resmi beserta salinan Sertifikat GIA <span id="conf-gia">{{ $conf['gia_report'] }}</span> telah disiapkan untuk sesi inspeksi mikroskop 10x Anda.
                         </p>
 
                         <!-- Action Buttons (11:992 - 11:995) -->
@@ -391,7 +389,7 @@
                 ) || productsData[0];
 
                 const randomNum = String(Math.floor(Math.random() * 900) + 100);
-                const code = `#KIRA-VIP-2026-${randomNum}`;
+                const code = `KIRA-VIP-2026-${randomNum}`;
 
                 const confCode = document.getElementById('conf-code');
                 const confDatetime = document.getElementById('conf-datetime');

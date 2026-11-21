@@ -21,18 +21,18 @@
             data-mode="full"
             data-theme="pearl"
             class="apple-glass-nav w-full h-[88px] bg-[#F7F4EE]/95 border-b border-[#E5DEC9]/80 transition-all duration-500 ease-[cubic-bezier(0.28,0.11,0.32,1)]">
-            <div class="max-w-[1440px] mx-auto h-full px-6 md:px-12 lg:px-[120px] flex items-center justify-between gap-4">
+            <div class="max-w-[1440px] mx-auto h-full px-4 sm:px-6 md:px-12 lg:px-[120px] flex items-center justify-between gap-2 sm:gap-4">
 
                 <!-- Left: KIRA Brand Lockup (Logomark 02 Lotus Crown + Logotype 01 Haute Didone Serif) -->
-                <a href="{{ route('home') }}" class="flex items-center gap-3.5 group shrink-0" aria-label="KIRA Maison de Diamants Home">
-                    <div class="relative w-[36px] h-[39px] flex items-center justify-center transition-transform duration-300 group-hover:scale-105">
-                        <img id="kira-logo-light" src="/assets/kira/logo-lotus-crown.svg" alt="KIRA Lotus Crown Solitaire Logomark" width="36" height="39" class="block w-[36px] h-[39px]">
-                        <img id="kira-logo-dark" src="/assets/kira/logo-lotus-crown-dark.svg" alt="KIRA Lotus Crown Solitaire Logomark Dark" width="36" height="39" class="hidden w-[36px] h-[39px]">
+                <a href="{{ route('home') }}" class="flex items-center gap-2.5 sm:gap-3.5 group min-w-0 shrink" aria-label="KIRA Maison de Diamants Home">
+                    <div class="relative w-[34px] h-[37px] sm:w-[36px] sm:h-[39px] flex items-center justify-center shrink-0 transition-transform duration-300 group-hover:scale-105">
+                        <img id="kira-logo-light" src="/assets/kira/logo-lotus-crown.svg" alt="KIRA Lotus Crown Solitaire Logomark" width="36" height="39" class="block w-full h-full">
+                        <img id="kira-logo-dark" src="/assets/kira/logo-lotus-crown-dark.svg" alt="KIRA Lotus Crown Solitaire Logomark Dark" width="36" height="39" class="hidden w-full h-full">
                     </div>
-                    <span id="kira-logo-divider" class="h-7 w-[1px] bg-[#D8CEBE] transition-colors duration-300"></span>
-                    <div class="flex flex-col">
-                        <span id="kira-brand-title" class="font-serif font-bold text-[19px] leading-tight tracking-[0.04em] text-[#0F1E2E] transition-colors duration-300">KIRA</span>
-                        <span id="kira-brand-subtitle" class="font-sans font-bold text-[8.5px] tracking-[0.14em] text-[#9E7329] uppercase mt-0.5 transition-colors duration-300">MAISON DE DIAMANTS</span>
+                    <span id="kira-logo-divider" class="h-7 w-[1px] bg-[#D8CEBE] shrink-0 transition-colors duration-300"></span>
+                    <div class="flex flex-col min-w-0">
+                        <span id="kira-brand-title" class="font-serif font-bold text-[18px] sm:text-[19px] leading-tight tracking-[0.04em] text-[#0F1E2E] transition-colors duration-300">KIRA</span>
+                        <span id="kira-brand-subtitle" class="font-sans font-bold text-[8px] sm:text-[8.5px] tracking-[0.12em] sm:tracking-[0.14em] text-[#9E7329] uppercase mt-0.5 truncate transition-colors duration-300">MAISON DE DIAMANTS</span>
                     </div>
                 </a>
 
@@ -63,18 +63,18 @@
                 </nav>
 
                 <!-- Right: VIP Booking CTA & Mobile Menu Toggle -->
-                <div class="flex items-center gap-3 shrink-0">
+                <div class="flex items-center gap-2.5 sm:gap-3 shrink-0">
                     <!-- VIP Booking Primary Pill CTA -->
                     <a href="{{ route('contact') }}"
                        id="kira-nav-cta"
-                       class="inline-flex items-center justify-center px-5 py-2.5 rounded-full bg-[#0F1E2E] text-white font-bold text-[12.5px] tracking-wide hover:bg-[#193048] active:scale-[0.99] transition-all duration-300 shadow-xs">
+                       class="inline-flex items-center justify-center px-4 sm:px-5 py-2 sm:py-2.5 rounded-full bg-[#0F1E2E] text-white font-bold text-[12px] sm:text-[12.5px] tracking-wide hover:bg-[#193048] active:scale-[0.99] transition-all duration-300 shadow-xs">
                         VIP Booking
                     </a>
 
                     <!-- Mobile Menu Toggle -->
                     <button type="button"
                             id="kira-mobile-toggle"
-                            class="lg:hidden inline-flex items-center justify-center w-10 h-10 rounded-full border border-[#E5DEC9] bg-white/80 text-[#0F1E2E]"
+                            class="lg:hidden inline-flex items-center justify-center w-10 h-10 rounded-full border border-[#E5DEC9] bg-white/85 text-[#0F1E2E] shrink-0"
                             aria-label="Buka Menu Navigasi">
                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M4 7h16M4 12h16M4 17h16"/>
@@ -82,28 +82,28 @@
                     </button>
                 </div>
             </div>
+        </header>
 
-            <!-- Mobile Navigation Drawer -->
-            <div id="kira-mobile-menu" class="hidden lg:hidden bg-[#F7F4EE]/98 backdrop-blur-2xl border-b border-[#E5DEC9] px-6 py-5 shadow-xl">
-                <div class="flex flex-col gap-2">
-                    @foreach ($navItems as $item)
-                        @php $isActive = request()->routeIs($item['route']); @endphp
-                        <a href="{{ route($item['route']) }}"
-                           class="flex items-center justify-between px-4 py-2.5 rounded-xl text-[14px] {{ $isActive ? 'bg-[#EFE9DC] font-bold text-[#0F1E2E]' : 'text-[#243B53]' }}">
-                            <span>{{ $item['label'] }}</span>
-                            @if ($isActive)
-                                <span class="w-2 h-2 rounded-full bg-[#C99A49]"></span>
-                            @endif
-                        </a>
-                    @endforeach
-                    <div class="pt-2 mt-2 border-t border-[#E5DEC9] flex items-center justify-end">
-                        <a href="{{ route('contact') }}" class="w-full text-center px-4 py-2.5 rounded-full bg-[#C99A49] text-[#0F1E2E] font-bold text-[12.5px]">
-                            Book VIP Appointment
-                        </a>
-                    </div>
+        <!-- Mobile Navigation Drawer (Cleanly positioned below header capsule) -->
+        <div id="kira-mobile-menu" class="hidden lg:hidden mt-2 max-w-[1360px] mx-auto rounded-[24px] bg-[#F7F4EE]/98 backdrop-blur-2xl border border-[#E5DEC9] px-5 py-5 shadow-xl">
+            <div class="flex flex-col gap-2">
+                @foreach ($navItems as $item)
+                    @php $isActive = request()->routeIs($item['route']); @endphp
+                    <a href="{{ route($item['route']) }}"
+                       class="flex items-center justify-between px-4 py-2.5 rounded-xl text-[14px] {{ $isActive ? 'bg-[#EFE9DC] font-bold text-[#0F1E2E]' : 'text-[#243B53]' }}">
+                        <span>{{ $item['label'] }}</span>
+                        @if ($isActive)
+                            <span class="w-2 h-2 rounded-full bg-[#C99A49]"></span>
+                        @endif
+                    </a>
+                @endforeach
+                <div class="pt-2 mt-2 border-t border-[#E5DEC9] flex items-center justify-end">
+                    <a href="{{ route('contact') }}" class="w-full text-center px-4 py-2.5 rounded-full bg-[#C99A49] text-[#0F1E2E] font-bold text-[12.5px]">
+                        Book VIP Appointment
+                    </a>
                 </div>
             </div>
-        </header>
+        </div>
     </div>
 
     <!-- Spacer for fixed navbar (88px) -->
@@ -167,7 +167,7 @@
                         FLAGSHIP BOUTIQUE
                     </h3>
                     <ul class="space-y-2 text-[12.5px] text-[#5C6877]">
-                        <li class="font-medium text-[#0F1E2E]">KIRA Plaza Indonesia Level 1 #108</li>
+                        <li class="font-medium text-[#0F1E2E]">KIRA Plaza Indonesia Level 1</li>
                         <li>Senin – Minggu: 10.00 – 21.00 WIB</li>
                         <li>Concierge: <a href="tel:+622150889900" class="hover:text-[#0F1E2E] underline">+62 21 5088 9900</a></li>
                     </ul>
@@ -205,14 +205,15 @@
                     navWrapper.className = 'fixed top-0 inset-x-0 z-50 transition-all duration-500 ease-[cubic-bezier(0.28,0.11,0.32,1)]';
                     navbar.className = 'apple-glass-nav w-full h-[88px] bg-[#F7F4EE]/95 border-b border-[#E5DEC9]/80 transition-all duration-500 ease-[cubic-bezier(0.28,0.11,0.32,1)]';
                     if (navCta) {
-                        navCta.className = 'inline-flex items-center justify-center px-5 py-2.5 rounded-full bg-[#0F1E2E] text-white font-bold text-[12.5px] tracking-wide hover:bg-[#193048] transition-all duration-300 shadow-xs';
+                        navCta.className = 'inline-flex items-center justify-center px-4 sm:px-5 py-2 sm:py-2.5 rounded-full bg-[#0F1E2E] text-white font-bold text-[12px] sm:text-[12.5px] tracking-wide hover:bg-[#193048] transition-all duration-300 shadow-xs';
                     }
                 } else {
                     // STATE B: Automatic Floating Scroll Glass Capsule on scroll
-                    navWrapper.className = 'fixed top-3 inset-x-0 z-50 px-4 md:px-10 transition-all duration-500 ease-[cubic-bezier(0.28,0.11,0.32,1)]';
+                    // On mobile (< 640px), hide VIP Booking CTA inside the scrolled capsule so the 3-line toggle stays cleanly inside the frame
+                    navWrapper.className = 'fixed top-3 inset-x-0 z-50 px-3 sm:px-4 md:px-10 transition-all duration-500 ease-[cubic-bezier(0.28,0.11,0.32,1)]';
                     navbar.className = 'apple-glass-nav apple-glass-scrolled max-w-[1360px] mx-auto h-[64px] rounded-full border border-[#C99A49]/45 transition-all duration-500 ease-[cubic-bezier(0.28,0.11,0.32,1)]';
                     if (navCta) {
-                        navCta.className = 'inline-flex items-center justify-center px-5 py-2 rounded-full bg-[#0F1E2E] text-white font-bold text-[12px] tracking-wide hover:bg-[#193048] transition-all duration-300 shadow-xs';
+                        navCta.className = 'hidden sm:inline-flex items-center justify-center px-5 py-2 rounded-full bg-[#0F1E2E] text-white font-bold text-[12px] tracking-wide hover:bg-[#193048] transition-all duration-300 shadow-xs';
                     }
                 }
             }

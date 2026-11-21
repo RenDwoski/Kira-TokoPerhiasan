@@ -219,7 +219,7 @@
                     </div>
                     <div class="absolute bottom-4 inset-x-4">
                         <h3 class="font-serif font-bold text-[18px] text-white">VIP Salon Experience</h3>
-                        <p class="font-sans text-[11.5px] text-[#DCE6F2]">KIRA Plaza Indonesia Level 1 #108</p>
+                        <p class="font-sans text-[11.5px] text-[#DCE6F2]">KIRA Plaza Indonesia Level 1</p>
                     </div>
                 </a>
             </div>

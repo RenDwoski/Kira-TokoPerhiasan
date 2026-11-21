@@ -85,16 +85,11 @@
                             </div>
 
                             <!-- Metal Swatches -->
-                            <div class="mt-4 flex items-center justify-between px-1">
-                                <div class="flex items-center gap-2">
-                                    @foreach ($product['metals'] as $mIdx => $hex)
-                                        <span class="w-3.5 h-3.5 rounded-full inline-block {{ $mIdx === 0 ? 'ring-2 ring-[#0F1E2E] ring-offset-1' : 'border border-[#D8CEBE]' }}"
-                                              style="background-color: {{ $hex }};"></span>
-                                    @endforeach
-                                </div>
-                                <span class="font-sans font-bold text-[11px] text-[#5C6877]">
-                                    GIA #{{ $product['gia_report'] }}
-                                </span>
+                            <div class="mt-4 flex items-center gap-2 px-1">
+                                @foreach ($product['metals'] as $mIdx => $hex)
+                                    <span class="w-3.5 h-3.5 rounded-full inline-block {{ $mIdx === 0 ? 'ring-2 ring-[#0F1E2E] ring-offset-1' : 'border border-[#D8CEBE]' }}"
+                                          style="background-color: {{ $hex }};"></span>
+                                @endforeach
                             </div>
 
                             <!-- Title & Price -->

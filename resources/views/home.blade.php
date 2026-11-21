@@ -7,7 +7,7 @@
         $heroModes = [
             'daylight' => [
                 'src' => '/assets/kira/hero-jewelry.png',
-                'report' => 'Report #226789104 • 1.50 Ct',
+                'report' => 'Certified 1.50 Ct • D-VVS1',
                 'fire' => '2.417 nD Fire',
                 'subtitle' => 'Daylight D-Color Spectrum • 58 Facet Brilliance',
             ],
@@ -596,7 +596,7 @@
                 <div class="relative z-10 flex flex-col lg:flex-row items-start lg:items-center justify-between gap-6">
                     <div class="max-w-[760px]">
                         <p class="font-sans font-bold text-[10.5px] tracking-[0.08em] text-[#E6C587] uppercase">
-                            PRIVATE SALON CONCIERGE • PLAZA INDONESIA LEVEL 1 #108
+                            PRIVATE SALON CONCIERGE • PLAZA INDONESIA LEVEL 1
                         </p>
                         <h2 class="mt-2 font-serif font-bold text-[26px] sm:text-[30px] text-white leading-snug">
                             Jadwalkan Sesi Private Viewing di Butik Flagship KIRA

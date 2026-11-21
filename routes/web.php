@@ -68,7 +68,7 @@ Route::post('/contact/book', function (Request $request) {
             || $validated['collection'] === $p['name'];
     }) ?? $products[0];
 
-    $bookingCode = '#KIRA-VIP-2026-' . str_pad((string) rand(89, 989), 3, '0', STR_PAD_LEFT);
+    $bookingCode = 'KIRA-VIP-2026-' . str_pad((string) rand(89, 989), 3, '0', STR_PAD_LEFT);
 
     $confirmation = [
         'code' => $bookingCode,
@@ -80,7 +80,7 @@ Route::post('/contact/book', function (Request $request) {
         'visit_date' => $validated['visit_date'],
         'time_slot' => $validated['time_slot'],
         'notes' => $validated['notes'] ?? 'Standar 18K Champagne Gold • Inspeksi Loupe 10x',
-        'location' => 'KIRA Flagship Boutique, Plaza Indonesia Level 1 #108',
+        'location' => 'KIRA Flagship Boutique, Plaza Indonesia Level 1',
     ];
 
     return redirect()->route('contact', ['confirmed' => 1])
