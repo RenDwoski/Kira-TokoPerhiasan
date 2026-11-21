@@ -10,6 +10,7 @@ import {
     createDrawable,
     stagger as animeStagger,
 } from 'animejs';
+import { initLotusCrown3D } from './lotus-crown-3d.js';
 
 // Expose libraries globally for modularity across KIRA pages
 window.KiraMotion = {
@@ -26,6 +27,368 @@ window.KiraAnime = {
     stagger: animeStagger,
 };
 
+// =============================================================================
+// PAGE 01: HOMEPAGE EXPERIENCE (Hero Warm 18K, 10x Loupe Zoom, Motion + 3D)
+// =============================================================================
+function initHomeExperience() {
+    const heroStage = document.getElementById('hero-visual-stage');
+    if (!heroStage) return;
+
+    const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    let heroModes = {};
+    try {
+        heroModes = JSON.parse(heroStage.getAttribute('data-hero-modes') || '{}');
+    } catch {
+        heroModes = {};
+    }
+
+    // Preload all 3 hero mode images (Daylight, Warm 18K, 10x Loupe Macro)
+    Object.values(heroModes).forEach((cfg) => {
+        if (cfg && cfg.src) {
+            const img = new Image();
+            img.src = cfg.src;
+        }
+    });
+
+    const stageLayer = document.getElementById('hero-stage-layer');
+    const stageImg = document.getElementById('hero-stage-img');
+    const hudReport = document.getElementById('hero-hud-report');
+    const hudFire = document.getElementById('hero-hud-fire');
+    const hudModeSub = document.getElementById('hero-hud-sub');
+    const zoomBadge = document.getElementById('hero-zoom-factor');
+    const hotspotBtn = document.getElementById('hero-diamond-hotspot');
+    const loupeOverlay = document.getElementById('hero-loupe-overlay');
+    const loupeSvg = document.getElementById('hero-loupe-svg');
+    const lightBtns = Array.from(document.querySelectorAll('.hero-light-btn'));
+
+    let currentMode = 'daylight';
+    let isTransitioning = false;
+    const zoomState = { val: 1.0 };
+
+    // Continuous subtle orbital rotation on the 10x Loupe SVG lens ring via Anime.js
+    if (loupeSvg && !prefersReducedMotion) {
+        animeAnimate('#hero-loupe-ring-outer', {
+            rotate: [0, 360],
+            duration: 36000,
+            ease: 'linear',
+            loop: true,
+        });
+        animeAnimate('#hero-loupe-ring-inner', {
+            rotate: [0, -360],
+            duration: 48000,
+            ease: 'linear',
+            loop: true,
+        });
+    }
+
+    function playLoupeReticleDraw() {
+        if (!loupeSvg || prefersReducedMotion) return;
+        try {
+            const drawables = createDrawable('#hero-loupe-svg .loupe-draw-path');
+            if (drawables && drawables.length) {
+                animeAnimate(drawables, {
+                    draw: ['0 0', '0 1'],
+                    duration: 950,
+                    delay: animeStagger(70),
+                    ease: 'outQuad',
+                });
+            }
+        } catch {
+            // Safe fallback
+        }
+    }
+
+    function animateZoomCounter(targetFactor) {
+        if (!zoomBadge) return;
+        if (prefersReducedMotion) {
+            zoomState.val = targetFactor;
+            zoomBadge.textContent = `${targetFactor.toFixed(1)}×`;
+            return;
+        }
+        animeAnimate(zoomState, {
+            val: targetFactor,
+            duration: 620,
+            ease: 'outExpo',
+            onUpdate: () => {
+                zoomBadge.textContent = `${zoomState.val.toFixed(1)}×`;
+            },
+        });
+    }
+
+    function setActiveModeButtons(mode) {
+        lightBtns.forEach((b) => {
+            const isTarget = b.getAttribute('data-hero-mode') === mode;
+            b.setAttribute('aria-pressed', isTarget ? 'true' : 'false');
+            if (isTarget) {
+                b.className =
+                    'hero-light-btn px-3.5 h-[30px] rounded-full bg-[#F7F4EE] text-[#0F1E2E] font-sans font-bold text-[10.5px] whitespace-nowrap shadow-xs transition-all cursor-pointer';
+            } else {
+                b.className =
+                    'hero-light-btn px-3.5 h-[30px] rounded-full text-[#F7F4EE] hover:bg-white/15 font-sans font-bold text-[10.5px] whitespace-nowrap transition-all cursor-pointer';
+            }
+        });
+    }
+
+    function switchHeroMode(nextMode) {
+        const cfg = heroModes[nextMode];
+        if (!cfg || nextMode === currentMode || isTransitioning) return;
+
+        const prevMode = currentMode;
+        currentMode = nextMode;
+        setActiveModeButtons(nextMode);
+
+        // Update HUD text & Anime.js magnification counter
+        if (hudReport) hudReport.textContent = cfg.report;
+        if (hudFire) hudFire.textContent = cfg.fire;
+        if (hudModeSub) hudModeSub.textContent = cfg.subtitle || '';
+        animateZoomCounter(nextMode === 'loupe' ? 10.0 : 1.0);
+
+        if (!stageImg || !stageLayer) return;
+
+        if (prefersReducedMotion) {
+            stageImg.src = cfg.src;
+            stageLayer.style.transformOrigin = '50% 50%';
+            stageLayer.style.transform = 'none';
+            if (loupeOverlay) {
+                loupeOverlay.classList.toggle('opacity-0', nextMode !== 'loupe');
+                loupeOverlay.classList.toggle('opacity-100', nextMode === 'loupe');
+            }
+            if (hotspotBtn) {
+                hotspotBtn.classList.toggle('opacity-0', nextMode === 'loupe');
+                hotspotBtn.classList.toggle('pointer-events-none', nextMode === 'loupe');
+            }
+            return;
+        }
+
+        // CASE A: Entering 10x Loupe -> Camera Zoom-In toward focal diamond (41% 39%), then reveal macro detail!
+        if (nextMode === 'loupe') {
+            isTransitioning = true;
+            if (hotspotBtn) {
+                hotspotBtn.classList.add('opacity-0', 'pointer-events-none');
+            }
+
+            stageLayer.style.transformOrigin = '41% 39%';
+            motionAnimate(
+                stageLayer,
+                { scale: [1, 2.35], opacity: [1, 0.18] },
+                { duration: 0.28, ease: [0.32, 0, 0.67, 0] }
+            ).then(() => {
+                stageImg.src = cfg.src;
+                stageLayer.style.transformOrigin = '50% 50%';
+
+                if (loupeOverlay) {
+                    loupeOverlay.classList.remove('opacity-0');
+                    loupeOverlay.classList.add('opacity-100');
+                }
+                playLoupeReticleDraw();
+
+                motionAnimate(
+                    stageLayer,
+                    { scale: [0.84, 1], opacity: [0.22, 1] },
+                    { type: 'spring', stiffness: 230, damping: 23 }
+                ).then(() => {
+                    isTransitioning = false;
+                });
+            });
+            return;
+        }
+
+        // CASE B: Leaving 10x Loupe back to Daylight or Warm 18K -> Smooth Zoom-Out
+        if (prevMode === 'loupe') {
+            isTransitioning = true;
+            if (loupeOverlay) {
+                loupeOverlay.classList.remove('opacity-100');
+                loupeOverlay.classList.add('opacity-0');
+            }
+
+            stageImg.src = cfg.src;
+            stageLayer.style.transformOrigin = '41% 39%';
+
+            motionAnimate(
+                stageLayer,
+                { scale: [1.42, 1], opacity: [0.45, 1] },
+                { type: 'spring', stiffness: 220, damping: 24 }
+            ).then(() => {
+                stageLayer.style.transformOrigin = '50% 50%';
+                if (hotspotBtn) {
+                    hotspotBtn.classList.remove('opacity-0', 'pointer-events-none');
+                }
+                isTransitioning = false;
+            });
+            return;
+        }
+
+        // CASE C: Switching between Daylight D-Color & Warm 18K -> Golden Atelier Cross-Transition
+        stageImg.src = cfg.src;
+        stageLayer.style.transformOrigin = '50% 50%';
+        motionAnimate(
+            stageLayer,
+            { scale: [1.045, 1], opacity: [0.58, 1] },
+            { type: 'spring', stiffness: 250, damping: 24 }
+        );
+    }
+
+    lightBtns.forEach((btn) => {
+        btn.addEventListener('click', () => {
+            const mode = btn.getAttribute('data-hero-mode');
+            if (mode) switchHeroMode(mode);
+        });
+    });
+
+    // Clicking the focal diamond hotspot on the image directly triggers 10x Loupe zoom
+    if (hotspotBtn) {
+        hotspotBtn.addEventListener('click', () => {
+            switchHeroMode('loupe');
+        });
+    }
+
+    // Featured Collections Category Filter with Motion.dev Spring Reveal
+    const filterBtns = Array.from(document.querySelectorAll('.home-filter-btn'));
+    const productCards = Array.from(document.querySelectorAll('.home-product-card'));
+
+    filterBtns.forEach((btn) => {
+        btn.addEventListener('click', () => {
+            const cat = btn.getAttribute('data-filter-category');
+
+            filterBtns.forEach((b) => {
+                b.className =
+                    'home-filter-btn px-5 py-2 rounded-full text-[#243B53] hover:text-[#0F1E2E] font-sans font-bold text-[12px] transition-all cursor-pointer';
+            });
+            btn.className =
+                'home-filter-btn px-5 py-2 rounded-full bg-white text-[#0F1E2E] font-sans font-bold text-[12px] shadow-2xs transition-all cursor-pointer';
+
+            const visibleCards = [];
+            productCards.forEach((card) => {
+                const cardCat = card.getAttribute('data-product-category');
+                if (cat === 'all' || cardCat === cat) {
+                    card.classList.remove('hidden');
+                    visibleCards.push(card);
+                } else {
+                    card.classList.add('hidden');
+                }
+            });
+
+            if (visibleCards.length && !prefersReducedMotion) {
+                motionAnimate(
+                    visibleCards,
+                    { opacity: [0, 1], y: [16, 0], scale: [0.97, 1] },
+                    {
+                        type: 'spring',
+                        stiffness: 300,
+                        damping: 24,
+                        delay: motionStagger(0.06),
+                    }
+                );
+            }
+        });
+    });
+
+    // Anime.js Counters for Section 1.4 Warisan & Filosofi Optical Telemetry
+    let homeCountersPlayed = false;
+    function runHomeCounters() {
+        if (homeCountersPlayed) return;
+        homeCountersPlayed = true;
+        document.querySelectorAll('[data-home-anime-counter]').forEach((el, idx) => {
+            const target = parseFloat(el.getAttribute('data-target') || '0');
+            const decimals = parseInt(el.getAttribute('data-decimals') || '0', 10);
+            const prefix = el.getAttribute('data-prefix') || '';
+            const suffix = el.getAttribute('data-suffix') || '';
+
+            if (prefersReducedMotion) {
+                el.textContent = `${prefix}${target.toFixed(decimals)}${suffix}`;
+                return;
+            }
+
+            const state = { val: 0 };
+            animeAnimate(state, {
+                val: target,
+                duration: 1200,
+                delay: idx * 130,
+                ease: 'outExpo',
+                onUpdate: () => {
+                    el.textContent = `${prefix}${state.val.toFixed(decimals)}${suffix}`;
+                },
+            });
+        });
+    }
+
+    // Motion.dev Scroll Reveal & Tactile Hover/Press Physics across Homepage
+    if (!prefersReducedMotion) {
+        const heroItems = document.querySelectorAll('[data-home-hero-item]');
+        if (heroItems.length) {
+            motionAnimate(
+                heroItems,
+                { opacity: [0, 1], y: [22, 0] },
+                {
+                    duration: 0.68,
+                    delay: motionStagger(0.085),
+                    ease: [0.22, 1, 0.36, 1],
+                }
+            );
+        }
+
+        motionAnimate(
+            heroStage,
+            { opacity: [0, 1], y: [24, 0], scale: [0.98, 1] },
+            { duration: 0.76, delay: 0.12, ease: [0.22, 1, 0.36, 1] }
+        );
+
+        document.querySelectorAll('[data-home-reveal-group]').forEach((group) => {
+            inView(
+                group,
+                () => {
+                    const items = group.querySelectorAll('[data-home-reveal-item]');
+                    if (items.length) {
+                        motionAnimate(
+                            items,
+                            { opacity: [0, 1], y: [22, 0] },
+                            {
+                                duration: 0.64,
+                                delay: motionStagger(0.08),
+                                ease: [0.22, 1, 0.36, 1],
+                            }
+                        );
+                    }
+                    if (group.hasAttribute('data-home-counter-trigger')) {
+                        runHomeCounters();
+                    }
+                },
+                { amount: 0.14 }
+            );
+        });
+
+        hover('[data-home-trust-card]', (el) => {
+            motionAnimate(el, { y: -3, scale: 1.01 }, { type: 'spring', stiffness: 380, damping: 24 });
+            return () => {
+                motionAnimate(el, { y: 0, scale: 1 }, { type: 'spring', stiffness: 340, damping: 26 });
+            };
+        });
+
+        hover('.hero-light-btn', (el) => {
+            motionAnimate(el, { scale: 1.04 }, { type: 'spring', stiffness: 420, damping: 22 });
+            return () => {
+                motionAnimate(el, { scale: 1 }, { type: 'spring', stiffness: 380, damping: 24 });
+            };
+        });
+
+        press('.hero-light-btn', (el) => {
+            motionAnimate(el, { scale: 0.95 }, { type: 'spring', stiffness: 520, damping: 26 });
+            return () => {
+                motionAnimate(el, { scale: 1 }, { type: 'spring', stiffness: 420, damping: 24 });
+            };
+        });
+    } else {
+        runHomeCounters();
+    }
+
+    // Initialize Real-Time 3D Lotus Crown Model in Section 1.4
+    initLotusCrown3D();
+}
+
+// =============================================================================
+// PAGE 02: ABOUT BRAND STORY (360° Multi-Angle Diamond Slider + Motion + Anime)
+// =============================================================================
 function initAboutBrandStory() {
     const section = document.getElementById('brand-story-section');
     if (!section) return;
@@ -40,7 +403,6 @@ function initAboutBrandStory() {
 
     const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-    // Preload all 4 rotating diamond images for instant zero-flicker sliding
     angles.forEach((angle) => {
         if (angle && angle.src) {
             const preload = new Image();
@@ -48,7 +410,6 @@ function initAboutBrandStory() {
         }
     });
 
-    // DOM references
     const stage = document.getElementById('brand-diamond-stage');
     const imgLayer = document.getElementById('brand-diamond-layer');
     const mainImg = document.getElementById('brand-diamond-img');
@@ -77,9 +438,6 @@ function initAboutBrandStory() {
     const liveDegreeObj = { value: angles[0].degree_num ?? 0 };
     const liveMetricObj = { value: angles[0].metric_num ?? 58 };
 
-    // -------------------------------------------------------------------------
-    // 1. ANIME.JS: Sacred Geometry SVG Line-Drawing, Orbital Rings & Sparkles
-    // -------------------------------------------------------------------------
     function playFacetSvgDraw() {
         if (!facetSvg || prefersReducedMotion) return;
         try {
@@ -93,7 +451,7 @@ function initAboutBrandStory() {
                 });
             }
         } catch {
-            // Keep SVG cleanly visible if drawable helper cannot measure hidden node
+            // Safe fallback
         }
     }
 
@@ -115,7 +473,6 @@ function initAboutBrandStory() {
     }
 
     if (facetSvg && !prefersReducedMotion) {
-        // Continuous slow orbital rotation on outer & inner diamond compass rings
         animeAnimate('#brand-reticle-outer', {
             rotate: [0, 360],
             duration: 44000,
@@ -130,7 +487,6 @@ function initAboutBrandStory() {
             loop: true,
         });
 
-        // Staggered luminous sparkle pulse on cardinal diamond nodes
         animeAnimate('#brand-facet-svg .facet-sparkle-dot', {
             scale: [0.75, 1.35, 0.75],
             opacity: [0.35, 0.95, 0.35],
@@ -141,9 +497,6 @@ function initAboutBrandStory() {
         });
     }
 
-    // -------------------------------------------------------------------------
-    // 2. ANIME.JS: Numerical Counter Morphing for Live Angle & Optical Telemetry
-    // -------------------------------------------------------------------------
     function animateDegreeCounter(targetDeg) {
         if (!degNumEl) return;
         if (prefersReducedMotion) {
@@ -205,9 +558,6 @@ function initAboutBrandStory() {
         });
     }
 
-    // -------------------------------------------------------------------------
-    // 3. MOTION.DEV: Scroll Entrance, Stagger & Spring Micro-Interactions
-    // -------------------------------------------------------------------------
     if (!prefersReducedMotion) {
         inView(
             section,
@@ -254,7 +604,6 @@ function initAboutBrandStory() {
             { amount: 0.12 }
         );
 
-        // Reveal lower About sections smoothly on scroll
         document.querySelectorAll('[data-about-reveal-group]').forEach((group) => {
             inView(
                 group,
@@ -276,7 +625,6 @@ function initAboutBrandStory() {
             );
         });
 
-        // Tactile Motion.dev spring hover & press physics on thumbnails, trait pills, & highlight cards
         hover('.brand-angle-thumb', (el) => {
             motionAnimate(el, { y: -3, scale: 1.02 }, { type: 'spring', stiffness: 420, damping: 24 });
             return () => {
@@ -315,9 +663,6 @@ function initAboutBrandStory() {
         triggerTelemetryCounters();
     }
 
-    // -------------------------------------------------------------------------
-    // 4. INTERACTIVE SLIDER STATE CONTROLLER (Motion.dev + Anime.js Sync)
-    // -------------------------------------------------------------------------
     function updateRangeVisual(idx) {
         if (!rangeInput) return;
         rangeInput.value = String(idx);
@@ -344,10 +689,8 @@ function initAboutBrandStory() {
         const angle = angles[safeIdx];
         if (!angle) return;
 
-        // Update range scrubber fill
         updateRangeVisual(safeIdx);
 
-        // Update image with Motion.dev 3D spring turn
         if (mainImg && imgLayer) {
             mainImg.src = angle.src;
             mainImg.alt = `KIRA Diamond — ${angle.title} (${angle.degree})`;
@@ -370,7 +713,6 @@ function initAboutBrandStory() {
             }
         }
 
-        // Update HUD text with gentle Motion.dev spring pop
         if (badgeTagEl) badgeTagEl.textContent = angle.tag;
         if (stepTextEl) stepTextEl.textContent = `0${safeIdx + 1} / 0${total}`;
         if (titleEl) titleEl.textContent = angle.title;
@@ -385,14 +727,12 @@ function initAboutBrandStory() {
             );
         }
 
-        // Sync Anime.js numeric counters & SVG refraction rays
         animateDegreeCounter(angle.degree_num ?? 0);
         animateMetricCounter(angle.metric_num ?? 58, angle.metric_decimals ?? 0, angle.metric_suffix ?? '');
         if (animateTransition && direction !== 0) {
             pulseFacetRays();
         }
 
-        // Sync active state on the 4 thumbnail pills
         thumbBtns.forEach((btn) => {
             const idx = parseInt(btn.getAttribute('data-brand-angle-index') || '0', 10);
             const degBadge = btn.querySelector('[data-thumb-deg]');
@@ -417,9 +757,6 @@ function initAboutBrandStory() {
         });
     }
 
-    // -------------------------------------------------------------------------
-    // 5. AUTO-ORBIT CONTROLLER
-    // -------------------------------------------------------------------------
     function setAutoOrbit(enabled) {
         isAutoOrbit = enabled;
         if (autoOrbitTimer) {
@@ -449,22 +786,18 @@ function initAboutBrandStory() {
         }
     }
 
-    // -------------------------------------------------------------------------
-    // 6. POINTER DRAG / TOUCH SWIPE, RANGE SLIDER & TOGGLE BINDINGS
-    // -------------------------------------------------------------------------
     if (stage && imgLayer) {
         let isDragging = false;
         let startX = 0;
 
         stage.addEventListener('pointerdown', (e) => {
-            // Ignore clicks on buttons inside the stage (e.g., Grid Optik toggle)
             if (e.target.closest('button')) return;
             isDragging = true;
             startX = e.clientX;
             try {
                 stage.setPointerCapture(e.pointerId);
             } catch {
-                // Ignore if pointer capture unavailable
+                // Safe ignore
             }
             if (isAutoOrbit) setAutoOrbit(false);
         });
@@ -499,7 +832,6 @@ function initAboutBrandStory() {
         stage.addEventListener('pointerup', endDrag);
         stage.addEventListener('pointercancel', endDrag);
 
-        // Keyboard accessibility when stage is focused
         stage.addEventListener('keydown', (e) => {
             if (e.key === 'ArrowRight') {
                 e.preventDefault();
@@ -557,11 +889,11 @@ function initAboutBrandStory() {
         });
     }
 
-    // Initialize initial angle state & start gentle auto-orbit off by default (user-driven or toggleable)
     updateRangeVisual(0);
     setAngle(0, false);
 }
 
 document.addEventListener('DOMContentLoaded', () => {
+    initHomeExperience();
     initAboutBrandStory();
 });
