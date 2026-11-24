@@ -15,6 +15,9 @@
 </head>
 <body class="bg-[#F7F4EE] text-[#0F1E2E] antialiased selection:bg-[#C99A49]/25 selection:text-[#0F1E2E] min-h-screen flex flex-col overflow-x-hidden">
 
+    <!-- Global Scroll-Linked Golden Light Progress Bar (Motion.dev) -->
+    <div id="kira-scroll-progress" aria-hidden="true"></div>
+
     <!-- Section 1.0: Interactive Apple-Inspired Sticky / Glass Navbar -->
     <div id="kira-nav-wrapper" class="fixed top-0 inset-x-0 z-50 transition-all duration-500 ease-[cubic-bezier(0.28,0.11,0.32,1)]">
         <header id="kira-navbar"
@@ -67,6 +70,7 @@
                     <!-- VIP Booking Primary Pill CTA -->
                     <a href="{{ route('contact') }}"
                        id="kira-nav-cta"
+                       data-magnetic
                        class="inline-flex items-center justify-center px-4 sm:px-5 py-2 sm:py-2.5 rounded-full bg-[#0F1E2E] text-white font-bold text-[12px] sm:text-[12.5px] tracking-wide hover:bg-[#193048] active:scale-[0.99] transition-all duration-300 shadow-xs">
                         VIP Booking
                     </a>
@@ -117,10 +121,10 @@
     <!-- Section 1.5: Global Footer (Matches Figma Section_1_5_GlobalFooter) -->
     <footer class="bg-[#EFECE4] border-t border-[#DED6C6] text-[#0F1E2E] mt-auto">
         <div class="max-w-[1440px] mx-auto px-6 md:px-12 lg:px-[120px] pt-11 pb-7">
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-10 pb-9 border-b border-[#D8CEBE]">
+            <div data-kira-footer-grid class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-10 pb-9 border-b border-[#D8CEBE]">
 
                 <!-- Col 1: Brand Lockup & Description (4 cols) -->
-                <div class="lg:col-span-4">
+                <div data-kira-footer-col class="lg:col-span-4">
                     <a href="{{ route('home') }}" class="inline-flex items-center gap-3.5 group">
                         <img src="/assets/kira/logo-lotus-crown.svg" alt="KIRA Logomark" width="36" height="39" class="w-[36px] h-[39px]">
                         <span class="h-7 w-[1px] bg-[#D8CEBE]"></span>
@@ -135,7 +139,7 @@
                 </div>
 
                 <!-- Col 2: Sitemap Navigation (3 cols) -->
-                <div class="lg:col-span-3">
+                <div data-kira-footer-col class="lg:col-span-3">
                     <h3 class="font-sans font-bold text-[11px] tracking-[0.08em] text-[#0F1E2E] uppercase mb-3.5">
                         SITEMAP NAVIGATION
                     </h3>
@@ -149,7 +153,7 @@
                 </div>
 
                 <!-- Col 3: Layanan & Edukasi GIA (2.5 cols) -->
-                <div class="lg:col-span-2">
+                <div data-kira-footer-col class="lg:col-span-2">
                     <h3 class="font-sans font-bold text-[11px] tracking-[0.08em] text-[#0F1E2E] uppercase mb-3.5">
                         LAYANAN &amp; EDUKASI GIA
                     </h3>
@@ -162,7 +166,7 @@
                 </div>
 
                 <!-- Col 4: Flagship Boutique (3 cols) -->
-                <div class="lg:col-span-3">
+                <div data-kira-footer-col class="lg:col-span-3">
                     <h3 class="font-sans font-bold text-[11px] tracking-[0.08em] text-[#0F1E2E] uppercase mb-3.5">
                         FLAGSHIP BOUTIQUE
                     </h3>

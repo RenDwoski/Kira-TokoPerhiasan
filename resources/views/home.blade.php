@@ -31,10 +31,10 @@
     <!-- ======================================================================= -->
     <section class="relative overflow-hidden pt-6 pb-14 sm:pt-10 sm:pb-16 lg:pt-12 lg:pb-20">
         <!-- Decorative Ambient Glow Vectors from Figma (31:38 & 31:39) -->
-        <div class="pointer-events-none absolute -top-10 left-8 w-[440px] h-[440px] opacity-85 select-none">
+        <div data-parallax-orb class="pointer-events-none absolute -top-10 left-8 w-[440px] h-[440px] opacity-85 select-none">
             <img src="/assets/kira/hero-glow-left.svg" alt="" width="440" height="440" class="w-full h-full">
         </div>
-        <div class="pointer-events-none absolute top-4 right-16 w-[580px] h-[580px] opacity-85 select-none">
+        <div data-parallax-orb class="pointer-events-none absolute top-4 right-16 w-[580px] h-[580px] opacity-85 select-none">
             <img src="/assets/kira/hero-glow-right.svg" alt="" width="580" height="580" class="w-full h-full">
         </div>
 
@@ -68,10 +68,12 @@
                     <!-- Hero Pill CTAs (31:48 - 31:51) -->
                     <div data-home-hero-item class="mt-8 sm:mt-9 flex flex-wrap items-center gap-3.5 sm:gap-4">
                         <a href="{{ route('products') }}"
+                           data-magnetic
                            class="inline-flex items-center justify-center h-[54px] sm:h-[56px] px-7 sm:px-8 rounded-full bg-[#0F1E2E] border border-[#C99A49]/60 text-white font-sans font-bold text-[13.5px] sm:text-[14px] hover:bg-[#193048] hover:shadow-lg transition-all duration-300">
                             Jelajahi Koleksi
                         </a>
                         <a href="{{ route('about') }}"
+                           data-magnetic
                            class="inline-flex items-center justify-center h-[54px] sm:h-[56px] px-7 sm:px-8 rounded-full bg-white/95 border border-[#C99A49]/65 text-[#0F1E2E] font-sans font-bold text-[13.5px] sm:text-[14px] hover:bg-[#EFE9DC]/70 transition-all duration-300">
                             Kisah Maison
                         </a>
@@ -349,6 +351,7 @@
                 @foreach ($featuredProducts as $product)
                     <article data-product-category="{{ $product['category'] }}"
                              data-home-reveal-item
+                             data-tilt-card
                              class="home-product-card bento-card p-5 flex flex-col justify-between">
                         <div>
                             <!-- Product Image Wrapper (344x236 aspect) -->
@@ -573,10 +576,12 @@
 
                         <div class="pt-2 flex flex-wrap items-center gap-3.5">
                             <a href="{{ route('about') }}"
+                               data-magnetic
                                class="inline-flex items-center justify-center h-[50px] px-7 rounded-full bg-[#0F1E2E] text-white font-sans font-bold text-[13px] hover:bg-[#193048] shadow-xs transition">
                                 Pelajari Kisah KIRA
                             </a>
                             <a href="{{ route('products', ['item' => 'lotus-crown-solitaire']) }}#gia-specs"
+                               data-magnetic
                                class="inline-flex items-center justify-center h-[50px] px-6 rounded-full bg-[#FAF8F3] border border-[#C99A49]/75 text-[#0F1E2E] font-sans font-bold text-[13px] hover:bg-[#EFE9DC] transition">
                                 Inspeksi Spesifikasi 4C
                             </a>
@@ -587,7 +592,7 @@
             </div>
 
             <!-- Card B: Private Salon Concierge VIP Banner (31:168 - 31:175) -->
-            <div data-home-reveal-item class="relative rounded-[28px] overflow-hidden bg-[#0F1E2E] border border-[#C99A49]/70 px-6 py-8 sm:px-9 sm:py-9 lg:px-12 lg:py-10 shadow-xl">
+            <div data-home-reveal-item data-sparkle-field data-sparkle-count="14" class="relative rounded-[28px] overflow-hidden bg-[#0F1E2E] border border-[#C99A49]/70 px-6 py-8 sm:px-9 sm:py-9 lg:px-12 lg:py-10 shadow-xl">
                 <!-- Right Decorative Gold Glow Orb (31:170) -->
                 <div class="pointer-events-none absolute -top-12 -right-8 w-[280px] h-[280px] opacity-90 select-none">
                     <img src="/assets/kira/vip-glow-orb.svg" alt="" width="280" height="280" class="w-full h-full">
@@ -608,6 +613,7 @@
 
                     <div class="shrink-0">
                         <a href="{{ route('contact') }}"
+                           data-magnetic
                            class="inline-flex items-center justify-center h-[56px] sm:h-[60px] px-8 rounded-full bg-[#C99A49] text-[#0F1E2E] font-sans font-bold text-[14px] hover:bg-[#E6C587] shadow-lg transition-all duration-300">
                             Book VIP Appointment
                         </a>

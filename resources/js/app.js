@@ -11,6 +11,7 @@ import {
     stagger as animeStagger,
 } from 'animejs';
 import { initLotusCrown3D } from './lotus-crown-3d.js';
+import { initGlobalMotionSystem, triggerSparkleBurst } from './kira-motion-system.js';
 
 // Expose libraries globally for modularity across KIRA pages
 window.KiraMotion = {
@@ -43,7 +44,6 @@ function initHomeExperience() {
         heroModes = {};
     }
 
-    // Preload all 3 hero mode images (Daylight, Warm 18K, 10x Loupe Macro)
     Object.values(heroModes).forEach((cfg) => {
         if (cfg && cfg.src) {
             const img = new Image();
@@ -66,7 +66,6 @@ function initHomeExperience() {
     let isTransitioning = false;
     const zoomState = { val: 1.0 };
 
-    // Continuous subtle orbital rotation on the 10x Loupe SVG lens ring via Anime.js
     if (loupeSvg && !prefersReducedMotion) {
         animeAnimate('#hero-loupe-ring-outer', {
             rotate: [0, 360],
@@ -138,7 +137,6 @@ function initHomeExperience() {
         currentMode = nextMode;
         setActiveModeButtons(nextMode);
 
-        // Update HUD text & Anime.js magnification counter
         if (hudReport) hudReport.textContent = cfg.report;
         if (hudFire) hudFire.textContent = cfg.fire;
         if (hudModeSub) hudModeSub.textContent = cfg.subtitle || '';
@@ -161,7 +159,6 @@ function initHomeExperience() {
             return;
         }
 
-        // CASE A: Entering 10x Loupe -> Camera Zoom-In toward focal diamond (41% 39%), then reveal macro detail!
         if (nextMode === 'loupe') {
             isTransitioning = true;
             if (hotspotBtn) {
@@ -194,7 +191,6 @@ function initHomeExperience() {
             return;
         }
 
-        // CASE B: Leaving 10x Loupe back to Daylight or Warm 18K -> Smooth Zoom-Out
         if (prevMode === 'loupe') {
             isTransitioning = true;
             if (loupeOverlay) {
@@ -219,7 +215,6 @@ function initHomeExperience() {
             return;
         }
 
-        // CASE C: Switching between Daylight D-Color & Warm 18K -> Golden Atelier Cross-Transition
         stageImg.src = cfg.src;
         stageLayer.style.transformOrigin = '50% 50%';
         motionAnimate(
@@ -236,14 +231,12 @@ function initHomeExperience() {
         });
     });
 
-    // Clicking the focal diamond hotspot on the image directly triggers 10x Loupe zoom
     if (hotspotBtn) {
         hotspotBtn.addEventListener('click', () => {
             switchHeroMode('loupe');
         });
     }
 
-    // Featured Collections Category Filter with Motion.dev Spring Reveal
     const filterBtns = Array.from(document.querySelectorAll('.home-filter-btn'));
     const productCards = Array.from(document.querySelectorAll('.home-product-card'));
 
@@ -284,7 +277,6 @@ function initHomeExperience() {
         });
     });
 
-    // Anime.js Counters for Section 1.4 Warisan & Filosofi Optical Telemetry
     let homeCountersPlayed = false;
     function runHomeCounters() {
         if (homeCountersPlayed) return;
@@ -313,7 +305,6 @@ function initHomeExperience() {
         });
     }
 
-    // Motion.dev Scroll Reveal & Tactile Hover/Press Physics across Homepage
     if (!prefersReducedMotion) {
         const heroItems = document.querySelectorAll('[data-home-hero-item]');
         if (heroItems.length) {
@@ -382,7 +373,6 @@ function initHomeExperience() {
         runHomeCounters();
     }
 
-    // Initialize Real-Time 3D Lotus Crown Model in Section 1.4
     initLotusCrown3D();
 }
 
@@ -619,6 +609,17 @@ function initAboutBrandStory() {
                                 ease: [0.22, 1, 0.36, 1],
                             }
                         );
+                    }
+
+                    const coreBadges = group.querySelectorAll('[data-core-badge]');
+                    if (coreBadges.length) {
+                        animeAnimate(coreBadges, {
+                            scale: [0.75, 1.08, 1],
+                            rotate: [-8, 0],
+                            duration: 760,
+                            delay: animeStagger(110),
+                            ease: 'outBack',
+                        });
                     }
                 },
                 { amount: 0.15 }
@@ -893,7 +894,1039 @@ function initAboutBrandStory() {
     setAngle(0, false);
 }
 
+// =============================================================================
+// PAGE 03: PRODUCTS CATALOG & 3D 4C INSPECTOR (Motion.dev + Anime.js Morphing)
+// =============================================================================
+function initProductsExperience() {
+    const root = document.getElementById('products-catalog-root');
+    if (!root) return;
+
+    const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    let productsData = [];
+    try {
+        productsData = JSON.parse(root.getAttribute('data-products') || '[]');
+    } catch {
+        productsData = [];
+    }
+    if (!productsData.length) return;
+
+    const contactBaseUrl = root.getAttribute('data-contact-url') || '/contact';
+    const initialId = root.getAttribute('data-selected-id') || productsData[0].id;
+    const productMap = {};
+    productsData.forEach((p) => {
+        productMap[p.id] = p;
+    });
+
+    let currentProduct = productMap[initialId] || productsData[0];
+    let currentAngleIndex = 0;
+
+    // Live Anime.js numerical state objects
+    const priceNumState = { val: Number(currentProduct.price) || 84500000 };
+    const caratNumState = { val: parseFloat(currentProduct.carat) || 1.5 };
+    const crownNumState = { val: parseFloat(currentProduct.crown_angle) || 34.5 };
+    const pavilionNumState = { val: parseFloat(currentProduct.pavilion_angle) || 40.8 };
+
+    const catalogGrid = document.getElementById('catalog-grid');
+    const inspectorCard = document.getElementById('detail-inspector-card');
+    const stage3d = document.getElementById('detail-3d-stage');
+    const layer3d = document.getElementById('detail-3d-layer');
+    const mainImg = document.getElementById('detail-main-image');
+    const hudBottom = document.getElementById('detail-hud-bottom');
+    const angleLabel = document.getElementById('detail-angle-label');
+    const hudChip = document.getElementById('detail-hud-chip');
+    const eyebrow = document.getElementById('detail-eyebrow');
+    const metalSpec = document.getElementById('detail-metal-spec');
+    const title = document.getElementById('detail-title');
+    const priceEl = document.getElementById('detail-price');
+    const shortSpec = document.getElementById('detail-short-spec');
+    const description = document.getElementById('detail-description');
+    const caratEl = document.getElementById('detail-carat');
+    const colorEl = document.getElementById('detail-color');
+    const clarityEl = document.getElementById('detail-clarity');
+    const cutEl = document.getElementById('detail-cut');
+    const crownEl = document.getElementById('detail-crown');
+    const pavilionEl = document.getElementById('detail-pavilion');
+    const fireEl = document.getElementById('detail-fire');
+    const bookCta = document.getElementById('detail-book-cta');
+
+    function preloadAngles(product) {
+        (product.angles || []).forEach((a) => {
+            if (a && a.src) {
+                const img = new Image();
+                img.src = a.src;
+            }
+        });
+    }
+    preloadAngles(currentProduct);
+
+    function formatRupiah(num) {
+        return 'Rp ' + Math.round(num).toLocaleString('id-ID');
+    }
+
+    function playDetailReticleDraw() {
+        if (prefersReducedMotion) return;
+        try {
+            const paths = createDrawable('#detail-reticle-svg .detail-reticle-path');
+            if (paths && paths.length) {
+                animeAnimate(paths, {
+                    draw: ['0 0', '0 1'],
+                    duration: 850,
+                    ease: 'outQuad',
+                });
+            }
+        } catch {
+            // Safe fallback
+        }
+    }
+
+    function setAngle(index, animateTilt = true) {
+        const angles = currentProduct.angles || [];
+        if (!angles.length) return;
+        const safeIdx = ((index % angles.length) + angles.length) % angles.length;
+        const direction =
+            safeIdx === currentAngleIndex
+                ? 0
+                : safeIdx === 0 && currentAngleIndex === angles.length - 1
+                  ? 1
+                  : safeIdx === angles.length - 1 && currentAngleIndex === 0
+                    ? -1
+                    : safeIdx > currentAngleIndex
+                      ? 1
+                      : -1;
+        currentAngleIndex = safeIdx;
+        const angle = angles[safeIdx];
+
+        if (mainImg && angle) {
+            mainImg.src = angle.src;
+            mainImg.alt = `${currentProduct.name} — ${angle.label}`;
+
+            if (animateTilt && !prefersReducedMotion && layer3d && direction !== 0) {
+                motionAnimate(
+                    layer3d,
+                    {
+                        rotateY: [direction * 14, 0],
+                        scale: [1.05, 1],
+                        opacity: [0.6, 1],
+                    },
+                    {
+                        type: 'spring',
+                        stiffness: 260,
+                        damping: 24,
+                    }
+                );
+            }
+        }
+
+        if (angleLabel && angle) {
+            angleLabel.textContent = `3D Detail • ${angle.label} (${angle.degree})`;
+        }
+
+        if (hudBottom && animateTilt && !prefersReducedMotion && direction !== 0) {
+            motionAnimate(
+                hudBottom,
+                { y: [5, 0], opacity: [0.72, 1] },
+                { type: 'spring', stiffness: 320, damping: 24 }
+            );
+            playDetailReticleDraw();
+        }
+
+        document.querySelectorAll('.detail-thumb-btn').forEach((btn) => {
+            const idx = parseInt(btn.getAttribute('data-thumb-index') || '0', 10);
+            const labelEl = document.getElementById(`detail-thumb-label-${idx}`);
+            if (idx === safeIdx) {
+                btn.classList.remove('border', 'border-[#E5DEC9]');
+                btn.classList.add('border-2', 'border-[#C99A49]', 'shadow-sm');
+                if (labelEl) {
+                    labelEl.classList.remove('text-white');
+                    labelEl.classList.add('text-[#E6C587]');
+                }
+            } else {
+                btn.classList.remove('border-2', 'border-[#C99A49]', 'shadow-sm');
+                btn.classList.add('border', 'border-[#E5DEC9]');
+                if (labelEl) {
+                    labelEl.classList.remove('text-[#E6C587]');
+                    labelEl.classList.add('text-white');
+                }
+            }
+        });
+
+        document.querySelectorAll('.detail-angle-pill').forEach((pill) => {
+            const idx = parseInt(pill.getAttribute('data-angle-pill') || '0', 10);
+            if (idx === safeIdx) {
+                pill.className =
+                    'detail-angle-pill flex-1 py-1.5 px-2.5 rounded-full font-sans font-bold text-[10.5px] tracking-wide transition cursor-pointer bg-[#0F1E2E] text-[#E6C587] shadow-2xs';
+            } else {
+                pill.className =
+                    'detail-angle-pill flex-1 py-1.5 px-2.5 rounded-full font-sans font-bold text-[10.5px] tracking-wide transition cursor-pointer text-[#5C6877] hover:text-[#0F1E2E]';
+            }
+        });
+    }
+
+    function selectProduct(productId, shouldScroll = true) {
+        const p = productMap[productId];
+        if (!p) return;
+        currentProduct = p;
+        preloadAngles(p);
+
+        (p.angles || []).forEach((angle, idx) => {
+            const thumbImg = document.getElementById(`detail-thumb-${idx}`);
+            const thumbLabel = document.getElementById(`detail-thumb-label-${idx}`);
+            const pillEl = document.querySelector(`[data-angle-pill="${idx}"] .angle-pill-text`);
+            if (thumbImg) {
+                thumbImg.src = angle.src;
+                thumbImg.alt = `${p.name} — ${angle.label}`;
+            }
+            if (thumbLabel) thumbLabel.textContent = angle.short;
+            if (pillEl) pillEl.textContent = angle.short;
+        });
+
+        setAngle(0, false);
+        if (!prefersReducedMotion && layer3d) {
+            motionAnimate(
+                layer3d,
+                { scale: [0.95, 1], opacity: [0.55, 1] },
+                { type: 'spring', stiffness: 250, damping: 23 }
+            );
+            playDetailReticleDraw();
+        }
+
+        if (hudChip) hudChip.textContent = `${p.color} • ${p.clarity} • ${p.carat}`;
+        if (eyebrow) eyebrow.textContent = p.eyebrow;
+        if (metalSpec) metalSpec.textContent = p.metal_spec;
+        if (title) title.textContent = `${p.name} — ${p.carat}`;
+        if (shortSpec) shortSpec.textContent = p.short_spec;
+        if (description) description.textContent = p.description;
+        if (colorEl) colorEl.textContent = p.color;
+        if (clarityEl) clarityEl.textContent = p.clarity;
+        if (cutEl) cutEl.textContent = p.cut;
+        if (fireEl) fireEl.textContent = p.refractive_index;
+
+        // ANIME.JS: Live Numerical Morphing for Price, Carat, Crown & Pavilion
+        const targetPrice = Number(p.price) || 0;
+        const targetCarat = parseFloat(p.carat) || 1.0;
+        const targetCrown = parseFloat(p.crown_angle) || 34.5;
+        const targetPavilion = parseFloat(p.pavilion_angle) || 40.8;
+
+        if (prefersReducedMotion) {
+            if (priceEl) priceEl.textContent = p.price_formatted;
+            if (caratEl) caratEl.textContent = p.carat;
+            if (crownEl) crownEl.textContent = p.crown_angle;
+            if (pavilionEl) pavilionEl.textContent = p.pavilion_angle;
+        } else {
+            if (priceEl) {
+                animeAnimate(priceNumState, {
+                    val: targetPrice,
+                    duration: 720,
+                    ease: 'outExpo',
+                    onUpdate: () => {
+                        priceEl.textContent = formatRupiah(priceNumState.val);
+                    },
+                });
+            }
+            if (caratEl) {
+                animeAnimate(caratNumState, {
+                    val: targetCarat,
+                    duration: 640,
+                    ease: 'outExpo',
+                    onUpdate: () => {
+                        caratEl.textContent = `${caratNumState.val.toFixed(2)} Ct`;
+                    },
+                });
+            }
+            if (crownEl) {
+                animeAnimate(crownNumState, {
+                    val: targetCrown,
+                    duration: 640,
+                    ease: 'outExpo',
+                    onUpdate: () => {
+                        crownEl.textContent = `${crownNumState.val.toFixed(1)}°`;
+                    },
+                });
+            }
+            if (pavilionEl) {
+                animeAnimate(pavilionNumState, {
+                    val: targetPavilion,
+                    duration: 640,
+                    ease: 'outExpo',
+                    onUpdate: () => {
+                        pavilionEl.textContent = `${pavilionNumState.val.toFixed(1)}°`;
+                    },
+                });
+            }
+
+            // MOTION.DEV: Staggered spring pop on 4C & Optical cards
+            const specCards = document.querySelectorAll('[data-4c-card], [data-optical-card]');
+            if (specCards.length) {
+                motionAnimate(
+                    specCards,
+                    { scale: [0.94, 1], y: [8, 0], opacity: [0.65, 1] },
+                    {
+                        type: 'spring',
+                        stiffness: 340,
+                        damping: 22,
+                        delay: motionStagger(0.045),
+                    }
+                );
+            }
+        }
+
+        if (bookCta) {
+            bookCta.href = `${contactBaseUrl}?collection=${encodeURIComponent(p.name)}`;
+            bookCta.textContent = `Book Private Viewing untuk ${p.cta_item_label || 'Koleksi Ini'}`;
+            if (shouldScroll) {
+                triggerSparkleBurst(bookCta, 10);
+            }
+        }
+
+        if (shouldScroll) {
+            document.getElementById('gia-specs')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+    }
+
+    // Initial Scroll Entrance Choreography on Products Page
+    if (!prefersReducedMotion) {
+        if (catalogGrid) {
+            inView(
+                catalogGrid,
+                () => {
+                    const cards = catalogGrid.querySelectorAll('.catalog-card:not(.hidden)');
+                    if (cards.length) {
+                        motionAnimate(
+                            cards,
+                            { opacity: [0, 1], y: [24, 0] },
+                            {
+                                duration: 0.65,
+                                delay: motionStagger(0.075),
+                                ease: [0.22, 1, 0.36, 1],
+                            }
+                        );
+                    }
+                },
+                { amount: 0.08 }
+            );
+        }
+
+        if (inspectorCard) {
+            inView(
+                inspectorCard,
+                () => {
+                    motionAnimate(
+                        inspectorCard,
+                        { opacity: [0, 1], y: [26, 0], scale: [0.985, 1] },
+                        { duration: 0.72, ease: [0.22, 1, 0.36, 1] }
+                    );
+                    playDetailReticleDraw();
+                },
+                { amount: 0.12 }
+            );
+        }
+
+        hover('.detail-thumb-btn, .detail-angle-pill', (el) => {
+            motionAnimate(el, { y: -2, scale: 1.03 }, { type: 'spring', stiffness: 420, damping: 24 });
+            return () => {
+                motionAnimate(el, { y: 0, scale: 1 }, { type: 'spring', stiffness: 380, damping: 26 });
+            };
+        });
+
+        press('.detail-thumb-btn, .detail-angle-pill, .select-product-btn', (el) => {
+            motionAnimate(el, { scale: 0.96 }, { type: 'spring', stiffness: 500, damping: 26 });
+            return () => {
+                motionAnimate(el, { scale: 1 }, { type: 'spring', stiffness: 420, damping: 24 });
+            };
+        });
+    }
+
+    document.querySelectorAll('[data-select-product]').forEach((btn) => {
+        btn.addEventListener('click', () => {
+            const pid = btn.getAttribute('data-select-product');
+            if (pid) selectProduct(pid, true);
+        });
+    });
+
+    document.querySelectorAll('.detail-thumb-btn').forEach((btn) => {
+        btn.addEventListener('click', () => {
+            const idx = parseInt(btn.getAttribute('data-thumb-index') || '0', 10);
+            setAngle(idx, true);
+        });
+    });
+
+    document.querySelectorAll('.detail-angle-pill').forEach((pill) => {
+        pill.addEventListener('click', () => {
+            const idx = parseInt(pill.getAttribute('data-angle-pill') || '0', 10);
+            setAngle(idx, true);
+        });
+    });
+
+    // Interactive 3D Drag-to-Rotate on Main Stage
+    if (stage3d && layer3d) {
+        let isDragging = false;
+        let startX = 0;
+
+        stage3d.addEventListener('pointerdown', (e) => {
+            isDragging = true;
+            startX = e.clientX;
+            try {
+                stage3d.setPointerCapture(e.pointerId);
+            } catch {
+                // Safe ignore
+            }
+        });
+
+        stage3d.addEventListener('pointermove', (e) => {
+            if (!isDragging) return;
+            const deltaX = e.clientX - startX;
+            const clampedTilt = Math.max(-13, Math.min(13, deltaX / 5));
+            layer3d.style.transform = `rotateY(${clampedTilt}deg) scale(1.02)`;
+
+            if (Math.abs(deltaX) >= 52) {
+                const step = deltaX > 0 ? 1 : -1;
+                startX = e.clientX;
+                setAngle(currentAngleIndex + step, true);
+            }
+        });
+
+        const endDrag = () => {
+            if (!isDragging) return;
+            isDragging = false;
+            if (!prefersReducedMotion) {
+                motionAnimate(
+                    layer3d,
+                    { rotateY: 0, scale: 1 },
+                    { type: 'spring', stiffness: 320, damping: 24 }
+                );
+            } else {
+                layer3d.style.transform = 'none';
+            }
+        };
+
+        stage3d.addEventListener('pointerup', endDrag);
+        stage3d.addEventListener('pointercancel', endDrag);
+    }
+
+    // Category Filter with Motion.dev Spring Cascade
+    const filterBtns = Array.from(document.querySelectorAll('[data-catalog-filter]'));
+    filterBtns.forEach((btn) => {
+        btn.addEventListener('click', () => {
+            const cat = btn.getAttribute('data-catalog-filter');
+            filterBtns.forEach((b) => {
+                b.className =
+                    'catalog-filter-btn px-4 py-2 rounded-full font-sans font-bold text-[12px] transition-all cursor-pointer bg-white text-[#243B53] border border-[#E5DEC9] hover:border-[#C99A49]';
+            });
+            btn.className =
+                'catalog-filter-btn px-4 py-2 rounded-full font-sans font-bold text-[12px] transition-all cursor-pointer bg-[#0F1E2E] text-white shadow-2xs';
+
+            const visible = [];
+            document.querySelectorAll('.catalog-card').forEach((card) => {
+                if (cat === 'all' || card.getAttribute('data-category') === cat) {
+                    card.classList.remove('hidden');
+                    visible.push(card);
+                } else {
+                    card.classList.add('hidden');
+                }
+            });
+
+            if (visible.length && !prefersReducedMotion) {
+                motionAnimate(
+                    visible,
+                    { opacity: [0, 1], y: [18, 0], scale: [0.96, 1] },
+                    {
+                        type: 'spring',
+                        stiffness: 310,
+                        damping: 24,
+                        delay: motionStagger(0.055),
+                    }
+                );
+            }
+        });
+    });
+
+    // Price Sort with Motion.dev Spring Reflow
+    const sortSelect = document.getElementById('catalog-sort');
+    if (sortSelect && catalogGrid) {
+        sortSelect.addEventListener('change', () => {
+            const mode = sortSelect.value;
+            const cards = Array.from(catalogGrid.querySelectorAll('.catalog-card'));
+            cards.sort((a, b) => {
+                const priceA = parseInt(a.getAttribute('data-price') || '0', 10);
+                const priceB = parseInt(b.getAttribute('data-price') || '0', 10);
+                const orderA = parseInt(a.getAttribute('data-order') || '0', 10);
+                const orderB = parseInt(b.getAttribute('data-order') || '0', 10);
+                if (mode === 'price-asc') return priceA - priceB;
+                if (mode === 'price-desc') return priceB - priceA;
+                return orderA - orderB;
+            });
+            cards.forEach((c) => catalogGrid.appendChild(c));
+
+            const visible = cards.filter((c) => !c.classList.contains('hidden'));
+            if (visible.length && !prefersReducedMotion) {
+                motionAnimate(
+                    visible,
+                    { opacity: [0.4, 1], y: [14, 0], scale: [0.97, 1] },
+                    {
+                        type: 'spring',
+                        stiffness: 320,
+                        damping: 24,
+                        delay: motionStagger(0.045),
+                    }
+                );
+            }
+        });
+    }
+
+    // Support static GitHub Pages ?item= & ?category= query params
+    const urlParams = new URLSearchParams(window.location.search);
+    const queryItem = urlParams.get('item');
+    if (queryItem && productMap[queryItem]) {
+        selectProduct(queryItem, false);
+    }
+    const queryCategory = urlParams.get('category');
+    if (queryCategory) {
+        const targetFilterBtn = document.querySelector(`[data-catalog-filter="${queryCategory}"]`);
+        targetFilterBtn?.click();
+    }
+}
+
+// =============================================================================
+// PAGE 04: GALLERY & 360° ATELIER SHOWCASE (Motion.dev + Anime.js Orbital)
+// =============================================================================
+function initGalleryExperience() {
+    const lookbookSection = document.getElementById('gallery-lookbook-section');
+    if (!lookbookSection) return;
+
+    const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    // 1. Staggered Masonry Entrance & Filter Reflow
+    const filterBtns = Array.from(document.querySelectorAll('[data-lookbook-filter]'));
+    const lookbookItems = Array.from(document.querySelectorAll('.lookbook-item'));
+
+    if (!prefersReducedMotion && lookbookItems.length) {
+        inView(
+            lookbookSection,
+            () => {
+                motionAnimate(
+                    lookbookItems,
+                    { opacity: [0, 1], y: [24, 0], scale: [0.98, 1] },
+                    {
+                        duration: 0.68,
+                        delay: motionStagger(0.065),
+                        ease: [0.22, 1, 0.36, 1],
+                    }
+                );
+            },
+            { amount: 0.06 }
+        );
+    }
+
+    filterBtns.forEach((btn) => {
+        btn.addEventListener('click', () => {
+            const cat = btn.getAttribute('data-lookbook-filter');
+            filterBtns.forEach((b) => {
+                b.className =
+                    'lookbook-filter-btn px-5 py-2.5 rounded-full bg-white border border-[#D8CEBE] text-[#243B53] hover:border-[#C99A49] font-sans font-bold text-[12px] transition cursor-pointer';
+            });
+            btn.className =
+                'lookbook-filter-btn px-5 py-2.5 rounded-full bg-[#0F1E2E] text-white font-sans font-bold text-[12px] shadow-2xs transition cursor-pointer';
+
+            const visible = [];
+            lookbookItems.forEach((item) => {
+                if (cat === 'all' || item.getAttribute('data-lookbook-cat') === cat) {
+                    item.classList.remove('hidden');
+                    visible.push(item);
+                } else {
+                    item.classList.add('hidden');
+                }
+            });
+
+            if (visible.length && !prefersReducedMotion) {
+                motionAnimate(
+                    visible,
+                    { opacity: [0, 1], y: [18, 0], scale: [0.95, 1] },
+                    {
+                        type: 'spring',
+                        stiffness: 310,
+                        damping: 24,
+                        delay: motionStagger(0.055),
+                    }
+                );
+            }
+        });
+    });
+
+    // 2. Upgraded Atelier 360° Optical Inspector (Anime.js Orbital + 4-Frame Diamond Cycle)
+    const card360 = document.getElementById('atelier-360-card');
+    if (card360) {
+        let frames = [];
+        try {
+            frames = JSON.parse(card360.getAttribute('data-360-frames') || '[]');
+        } catch {
+            frames = [];
+        }
+
+        frames.forEach((f) => {
+            if (f && f.src) {
+                const img = new Image();
+                img.src = f.src;
+            }
+        });
+
+        const bgImg = document.getElementById('atelier-360-bg');
+        const toggleBtn = document.getElementById('toggle-360-btn');
+        const statusText = document.getElementById('atelier-360-status');
+        const degBadge = document.getElementById('atelier-360-deg');
+        const frameLabel = document.getElementById('atelier-360-frame-label');
+        const stepPills = Array.from(document.querySelectorAll('[data-360-step]'));
+
+        let currentStep = 0;
+        let isPlaying = false;
+        let cycleTimer = null;
+        const degState = { val: 0 };
+
+        function playAtelierSvgDraw() {
+            if (prefersReducedMotion) return;
+            try {
+                const paths = createDrawable('#atelier-360-svg .atelier-draw-path');
+                if (paths && paths.length) {
+                    animeAnimate(paths, {
+                        draw: ['0 0', '0 1'],
+                        duration: 1100,
+                        delay: animeStagger(75),
+                        ease: 'outQuad',
+                    });
+                }
+            } catch {
+                // Safe fallback
+            }
+        }
+
+        if (!prefersReducedMotion) {
+            animeAnimate('#atelier-360-ring-outer', {
+                rotate: [0, 360],
+                duration: 24000,
+                ease: 'linear',
+                loop: true,
+            });
+            animeAnimate('#atelier-360-ring-inner', {
+                rotate: [0, -360],
+                duration: 32000,
+                ease: 'linear',
+                loop: true,
+            });
+
+            inView(
+                card360,
+                () => {
+                    motionAnimate(
+                        card360,
+                        { opacity: [0, 1], y: [26, 0], scale: [0.98, 1] },
+                        { duration: 0.72, ease: [0.22, 1, 0.36, 1] }
+                    );
+                    playAtelierSvgDraw();
+                },
+                { amount: 0.15 }
+            );
+        }
+
+        function setStep(nextIdx, animateFrame = true) {
+            if (!frames.length) return;
+            const safeIdx = ((nextIdx % frames.length) + frames.length) % frames.length;
+            currentStep = safeIdx;
+            const frame = frames[safeIdx];
+
+            if (bgImg && frame) {
+                bgImg.src = frame.src;
+                if (animateFrame && !prefersReducedMotion) {
+                    motionAnimate(
+                        bgImg,
+                        { scale: [1.12, 1.04], opacity: [0.28, 0.56] },
+                        { type: 'spring', stiffness: 210, damping: 24 }
+                    );
+                }
+            }
+
+            if (frameLabel && frame) {
+                frameLabel.textContent = frame.label;
+            }
+
+            if (degBadge && frame) {
+                if (prefersReducedMotion) {
+                    degBadge.textContent = `${frame.degree}°`;
+                } else {
+                    animeAnimate(degState, {
+                        val: frame.degree,
+                        duration: 640,
+                        ease: 'outExpo',
+                        onUpdate: () => {
+                            degBadge.textContent = `${Math.round(degState.val)}°`;
+                        },
+                    });
+                }
+            }
+
+            stepPills.forEach((pill) => {
+                const idx = parseInt(pill.getAttribute('data-360-step') || '0', 10);
+                if (idx === safeIdx) {
+                    pill.className =
+                        'atelier-step-pill px-3.5 py-1.5 rounded-full font-sans font-bold text-[10.5px] transition cursor-pointer bg-[#C99A49] text-[#0F1E2E] shadow-sm';
+                } else {
+                    pill.className =
+                        'atelier-step-pill px-3.5 py-1.5 rounded-full font-sans font-bold text-[10.5px] transition cursor-pointer bg-white/10 text-[#F7F4EE] border border-white/15 hover:border-[#C99A49]';
+                }
+            });
+        }
+
+        function setPlaying(enabled) {
+            isPlaying = enabled;
+            if (cycleTimer) {
+                clearInterval(cycleTimer);
+                cycleTimer = null;
+            }
+
+            if (enabled) {
+                if (toggleBtn) toggleBtn.textContent = '❚❚';
+                if (statusText) {
+                    statusText.textContent =
+                        '✦ Mode Rotasi Optik 360° Aktif: Memeriksa pantulan 58 faset berlian (Crown 34.5° • Pavilion 40.8° • 2.417 nD Fire).';
+                    statusText.classList.add('text-[#E6C587]');
+                }
+                setStep(currentStep + 1, true);
+                cycleTimer = setInterval(() => {
+                    setStep(currentStep + 1, true);
+                }, 2200);
+            } else {
+                if (toggleBtn) toggleBtn.textContent = '▶';
+                if (statusText) {
+                    statusText.textContent =
+                        'Simulasi dijeda. Klik tombol putar atau pilih sudut di bawah untuk melanjutkan inspeksi faset 360 derajat.';
+                    statusText.classList.remove('text-[#E6C587]');
+                }
+            }
+        }
+
+        if (toggleBtn) {
+            toggleBtn.addEventListener('click', () => {
+                setPlaying(!isPlaying);
+            });
+        }
+
+        stepPills.forEach((pill) => {
+            pill.addEventListener('click', () => {
+                if (isPlaying) setPlaying(false);
+                const idx = parseInt(pill.getAttribute('data-360-step') || '0', 10);
+                setStep(idx, true);
+            });
+        });
+    }
+
+    // 3. Client Stories Reveal & Anime.js Golden Star Wave
+    const storiesWrap = document.querySelector('[data-gallery-stories]');
+    if (storiesWrap && !prefersReducedMotion) {
+        inView(
+            storiesWrap,
+            () => {
+                const cards = storiesWrap.querySelectorAll('[data-story-card]');
+                if (cards.length) {
+                    motionAnimate(
+                        cards,
+                        { opacity: [0, 1], y: [22, 0] },
+                        {
+                            duration: 0.65,
+                            delay: motionStagger(0.09),
+                            ease: [0.22, 1, 0.36, 1],
+                        }
+                    );
+                }
+
+                const stars = storiesWrap.querySelectorAll('.client-star');
+                if (stars.length) {
+                    animeAnimate(stars, {
+                        scale: [0.3, 1.35, 1],
+                        rotate: [-18, 0],
+                        opacity: [0, 1],
+                        duration: 680,
+                        delay: animeStagger(65, { start: 220 }),
+                        ease: 'outBack',
+                    });
+                }
+            },
+            { amount: 0.15 }
+        );
+    }
+}
+
+// =============================================================================
+// PAGE 05: CONTACT, GOOGLE MAPS, SPRING FAQ & VIP SPARKLE SEAL (Motion + Anime)
+// =============================================================================
+function initContactExperience() {
+    const root = document.getElementById('contact-page-root');
+    if (!root) return;
+
+    const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    let productsData = [];
+    try {
+        productsData = JSON.parse(root.getAttribute('data-products') || '[]');
+    } catch {
+        productsData = [];
+    }
+
+    // 1. Pre-select collection from ?collection= query parameter (for static GitHub Pages)
+    const urlParams = new URLSearchParams(window.location.search);
+    const queryCollection = urlParams.get('collection');
+    const collectionSelect = document.getElementById('collection');
+    if (queryCollection && collectionSelect) {
+        const matchOpt = Array.from(collectionSelect.options).find(
+            (opt) =>
+                opt.value.toLowerCase().includes(queryCollection.toLowerCase()) ||
+                queryCollection.toLowerCase().includes(opt.value.toLowerCase())
+        );
+        if (matchOpt) {
+            collectionSelect.value = matchOpt.value;
+        }
+    }
+
+    // 2. Celebratory VIP Confirmation Seal Animation (Motion.dev Spring + Anime.js Checkmark + Sparkles)
+    function playVipConfirmationCelebration() {
+        const confSection = document.getElementById('vip-confirmation-section');
+        const confCard = document.getElementById('vip-confirmation-card');
+        const sealHost = document.getElementById('vip-seal-host');
+        if (!confSection) return;
+
+        confSection.classList.remove('hidden');
+        confSection.scrollIntoView({ behavior: 'smooth', block: 'center' });
+
+        if (prefersReducedMotion) return;
+
+        if (confCard) {
+            motionAnimate(
+                confCard,
+                { opacity: [0, 1], y: [26, 0], scale: [0.94, 1] },
+                { type: 'spring', stiffness: 240, damping: 22 }
+            );
+        }
+
+        try {
+            const sealPaths = createDrawable('#vip-seal-svg .vip-seal-draw');
+            if (sealPaths && sealPaths.length) {
+                animeAnimate(sealPaths, {
+                    draw: ['0 0', '0 1'],
+                    duration: 920,
+                    delay: animeStagger(240),
+                    ease: 'outExpo',
+                });
+            }
+        } catch {
+            // Safe fallback
+        }
+
+        if (sealHost) {
+            setTimeout(() => {
+                triggerSparkleBurst(sealHost, 20);
+            }, 280);
+        }
+    }
+
+    if (root.getAttribute('data-just-confirmed') === '1') {
+        setTimeout(playVipConfirmationCelebration, 180);
+    }
+
+    // 3. Client-side VIP Booking handler when hosted statically on GitHub Pages
+    const bookingForm = document.getElementById('vip-booking-form');
+    const isStaticHost =
+        window.location.hostname.endsWith('github.io') || window.location.protocol === 'file:';
+
+    if (bookingForm && isStaticHost) {
+        bookingForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            const fullName =
+                document.getElementById('full_name')?.value.trim() || 'Tamu Kehormatan KIRA';
+            const email = document.getElementById('email')?.value.trim() || '';
+            const whatsapp = document.getElementById('whatsapp')?.value.trim() || '';
+            const selectedCol = collectionSelect?.value || 'The Lotus Crown Solitaire';
+            const visitDate =
+                document.getElementById('visit_date')?.value.trim() || 'Sabtu, 14 November 2026';
+            const timeSlot =
+                document.getElementById('time_slot')?.value || 'Sesi Siang (14:00 WIB)';
+
+            const matchedProduct =
+                productsData.find(
+                    (p) =>
+                        selectedCol.toLowerCase().includes(p.name.toLowerCase()) ||
+                        p.name.toLowerCase().includes(selectedCol.toLowerCase())
+                ) || productsData[0] || { name: selectedCol, carat: '1.50 Ct', gia_report: '226789104' };
+
+            const randomNum = String(Math.floor(Math.random() * 900) + 100);
+            const code = `KIRA-VIP-2026-${randomNum}`;
+
+            const confCode = document.getElementById('conf-code');
+            const confDatetime = document.getElementById('conf-datetime');
+            const confCollection = document.getElementById('conf-collection');
+            const confGia = document.getElementById('conf-gia');
+            const confGuestRow = document.getElementById('conf-guest-row');
+            const confCard = document.getElementById('vip-confirmation-card');
+            const confBadge = document.getElementById('vip-confirmation-badge');
+            const confHeading = document.getElementById('conf-heading');
+            const confMetaRow = document.getElementById('conf-meta-row');
+            const confLocationRow = document.getElementById('conf-location-row');
+            const confNoteRow = document.getElementById('conf-note-row');
+            const confHomeBtn = document.getElementById('conf-home-btn');
+
+            if (confCode) confCode.textContent = code;
+            if (confDatetime) confDatetime.textContent = `${visitDate} (${timeSlot})`;
+            if (confCollection) {
+                confCollection.textContent = `${matchedProduct.name} (${matchedProduct.carat})`;
+            }
+            if (confGia) confGia.textContent = matchedProduct.gia_report;
+            if (confGuestRow) {
+                confGuestRow.textContent = `Tamu VIP: ${fullName} (${email} • ${whatsapp})`;
+                confGuestRow.classList.remove('hidden');
+            }
+
+            if (confCard) {
+                confCard.className =
+                    'rounded-[28px] bg-[#0F1E2E] text-white border-2 border-[#C99A49] ring-4 ring-[#C99A49]/25 p-7 sm:p-10 shadow-xl transition-all';
+            }
+            if (confBadge) {
+                confBadge.className =
+                    'inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-[#C99A49] text-[#0F1E2E] font-sans font-bold text-[10.5px] tracking-wider uppercase mb-6';
+            }
+            if (confHeading) {
+                confHeading.className =
+                    'font-serif font-bold text-[26px] sm:text-[34px] text-white leading-snug';
+            }
+            if (confMetaRow) {
+                confMetaRow.className = 'mt-2 font-sans font-bold text-[15.5px] text-[#E6C587]';
+            }
+            if (confLocationRow) {
+                confLocationRow.className = 'mt-1.5 font-sans font-medium text-[14px] text-[#DCE6F2]';
+            }
+            if (confNoteRow) {
+                confNoteRow.className = 'mt-1.5 font-sans text-[13px] text-[#DCE6F2]/85';
+            }
+            if (confHomeBtn) {
+                confHomeBtn.className =
+                    'h-[52px] px-7 rounded-full bg-white/10 border border-white/25 text-white hover:bg-white/20 font-sans font-bold text-[13.5px] flex items-center justify-center transition';
+            }
+
+            playVipConfirmationCelebration();
+        });
+    }
+
+    // 4. Split-Column Entrance & Tactile Form Field Lift
+    if (!prefersReducedMotion) {
+        const mainGrid = document.getElementById('contact-main-grid');
+        if (mainGrid) {
+            inView(
+                mainGrid,
+                () => {
+                    const leftCard = mainGrid.querySelector('[data-contact-left]');
+                    const rightCard = mainGrid.querySelector('[data-contact-right]');
+                    if (leftCard) {
+                        motionAnimate(
+                            leftCard,
+                            { opacity: [0, 1], x: [-22, 0], y: [14, 0] },
+                            { duration: 0.68, ease: [0.22, 1, 0.36, 1] }
+                        );
+                    }
+                    if (rightCard) {
+                        motionAnimate(
+                            rightCard,
+                            { opacity: [0, 1], x: [22, 0], y: [14, 0] },
+                            { duration: 0.68, delay: 0.09, ease: [0.22, 1, 0.36, 1] }
+                        );
+                    }
+                },
+                { amount: 0.1 }
+            );
+        }
+
+        document.querySelectorAll('[data-form-group]').forEach((group) => {
+            group.addEventListener('focusin', () => {
+                motionAnimate(group, { y: -2 }, { type: 'spring', stiffness: 400, damping: 24 });
+            });
+            group.addEventListener('focusout', () => {
+                motionAnimate(group, { y: 0 }, { type: 'spring', stiffness: 360, damping: 26 });
+            });
+        });
+
+        const faqList = document.querySelector('[data-faq-list]');
+        if (faqList) {
+            inView(
+                faqList,
+                () => {
+                    const items = faqList.querySelectorAll('.faq-item');
+                    if (items.length) {
+                        motionAnimate(
+                            items,
+                            { opacity: [0, 1], y: [18, 0] },
+                            {
+                                duration: 0.6,
+                                delay: motionStagger(0.07),
+                                ease: [0.22, 1, 0.36, 1],
+                            }
+                        );
+                    }
+                },
+                { amount: 0.12 }
+            );
+        }
+    }
+
+    // 5. Interactive FAQ Accordions with Motion.dev Spring Physics
+    document.querySelectorAll('.faq-item').forEach((item) => {
+        const btn = item.querySelector('.faq-toggle');
+        const ans = item.querySelector('.faq-answer');
+        const icon = item.querySelector('.faq-icon');
+
+        btn?.addEventListener('click', () => {
+            if (!ans) return;
+            const isOpen = !ans.classList.contains('hidden');
+            if (isOpen) {
+                ans.classList.add('hidden');
+                if (icon) {
+                    icon.textContent = '+';
+                    if (!prefersReducedMotion) {
+                        motionAnimate(
+                            icon,
+                            { rotate: [-90, 0], scale: [0.85, 1] },
+                            { type: 'spring', stiffness: 420, damping: 22 }
+                        );
+                    }
+                }
+                btn.setAttribute('aria-expanded', 'false');
+            } else {
+                ans.classList.remove('hidden');
+                if (!prefersReducedMotion) {
+                    motionAnimate(
+                        ans,
+                        { opacity: [0, 1], y: [-8, 0] },
+                        { type: 'spring', stiffness: 340, damping: 25 }
+                    );
+                }
+                if (icon) {
+                    icon.textContent = '−';
+                    if (!prefersReducedMotion) {
+                        motionAnimate(
+                            icon,
+                            { rotate: [90, 0], scale: [0.85, 1] },
+                            { type: 'spring', stiffness: 420, damping: 22 }
+                        );
+                    }
+                }
+                btn.setAttribute('aria-expanded', 'true');
+            }
+        });
+    });
+}
+
+// =============================================================================
+// BOOTSTRAP ALL KIRA EXPERIENCES
+// =============================================================================
 document.addEventListener('DOMContentLoaded', () => {
+    initGlobalMotionSystem();
     initHomeExperience();
     initAboutBrandStory();
+    initProductsExperience();
+    initGalleryExperience();
+    initContactExperience();
 });

@@ -125,3 +125,68 @@
     perspective: 1200px;
     transform-style: preserve-3d;
 }
+
+/* Global Scroll-Linked Golden Light Thread (Motion.dev scroll) */
+#kira-scroll-progress {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 2.5px;
+    z-index: 70;
+    transform-origin: 0% 50%;
+    transform: scaleX(0);
+    background: linear-gradient(90deg, #9E7329 0%, #C99A49 45%, #F6E2B3 78%, #C99A49 100%);
+    box-shadow: 0 0 12px rgba(201, 154, 73, 0.55);
+    pointer-events: none;
+}
+
+/* 3D Specular Tilt & Champagne Gold Glint Sheen on Interactive Cards */
+[data-tilt-card] {
+    position: relative;
+    transform-style: preserve-3d;
+    will-change: transform;
+}
+
+@media (hover: hover) and (pointer: fine) {
+    [data-tilt-card]::after {
+        content: '';
+        position: absolute;
+        inset: 0;
+        border-radius: inherit;
+        pointer-events: none;
+        opacity: var(--glint-opacity, 0);
+        background: radial-gradient(
+            380px circle at var(--glint-x, 50%) var(--glint-y, 50%),
+            rgba(230, 197, 135, 0.22),
+            rgba(255, 255, 255, 0.08) 38%,
+            transparent 72%
+        );
+        transition: opacity 0.35s ease;
+        z-index: 5;
+    }
+}
+
+/* Subtle Luxury Shimmer Sweep on Primary Magnetic Buttons */
+[data-magnetic] {
+    will-change: transform;
+}
+
+/* Anime.js Sparkle Particles */
+.kira-sparkle-dot {
+    position: absolute;
+    border-radius: 9999px;
+    pointer-events: none;
+    background: radial-gradient(circle, #FFF8E7 0%, #E6C587 55%, rgba(201, 154, 73, 0) 100%);
+    box-shadow: 0 0 8px rgba(230, 197, 135, 0.75);
+}
+
+@media (prefers-reduced-motion: reduce) {
+    #kira-scroll-progress {
+        display: none;
+    }
+    [data-tilt-card],
+    [data-magnetic] {
+        transform: none !important;
+    }
+}

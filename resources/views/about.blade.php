@@ -67,17 +67,18 @@
     <!-- ======================================================================= -->
     <!-- PAGE 02 HEADER: ABOUT MAISON (Figma Node 11:408)                        -->
     <!-- ======================================================================= -->
-    <section class="bg-white/75 border-b border-[#E5DEC9] py-12 lg:py-16">
+    <section data-page-header class="bg-white/75 border-b border-[#E5DEC9] py-12 lg:py-16">
         <div class="max-w-[1440px] mx-auto px-5 sm:px-8 md:px-12 lg:px-[120px] text-center">
-            <p class="font-sans font-bold text-[11px] tracking-[0.12em] text-[#9E7329] uppercase">
+            <p data-page-header-item class="font-sans font-bold text-[11px] tracking-[0.12em] text-[#9E7329] uppercase">
                 HOME / ABOUT MAISON
             </p>
-            <h1 class="mt-2 font-serif font-bold text-[32px] sm:text-[42px] lg:text-[46px] text-[#0F1E2E] leading-tight">
+            <h1 data-page-header-item class="mt-2 font-serif font-bold text-[32px] sm:text-[42px] lg:text-[46px] text-[#0F1E2E] leading-tight">
                 Tentang KIRA — Maison de Diamants
             </h1>
-            <p class="mt-3 font-sans text-[14.5px] sm:text-[15px] text-[#5C6877] max-w-[680px] mx-auto leading-relaxed">
+            <p data-page-header-item class="mt-3 font-sans text-[14.5px] sm:text-[15px] text-[#5C6877] max-w-[680px] mx-auto leading-relaxed">
                 Diambil dari kata Sanskerta &ldquo;Kirana&rdquo; yang bermakna berkas sinar yang murni dan agung. Rumah perhiasan berlian modern yang memadukan potongan permata presisi tinggi dengan keanggunan tak lekang waktu.
             </p>
+            <div data-anime-line class="mt-5 mx-auto w-28 h-[2px] rounded-full bg-gradient-to-r from-transparent via-[#C99A49] to-transparent"></div>
         </div>
     </section>
 
@@ -413,7 +414,7 @@
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
 
                 <!-- Our Vision Card (11:435) -->
-                <div class="bento-card p-7 sm:p-8" data-about-reveal-item>
+                <div class="bento-card p-7 sm:p-8" data-about-reveal-item data-tilt-card>
                     <span class="inline-block px-3.5 py-1 rounded-full bg-[#EFE9DC] border border-[#C99A49]/50 font-sans font-bold text-[10.5px] tracking-wider text-[#9E7329] uppercase">
                         OUR VISION
                     </span>
@@ -426,7 +427,7 @@
                 </div>
 
                 <!-- Our Mission Card (11:443) -->
-                <div class="bento-card p-7 sm:p-8" data-about-reveal-item>
+                <div class="bento-card p-7 sm:p-8" data-about-reveal-item data-tilt-card>
                     <span class="inline-block px-3.5 py-1 rounded-full bg-[#0F1E2E] border border-[#C99A49]/60 font-sans font-bold text-[10.5px] tracking-wider text-[#E6C587] uppercase">
                         OUR MISSION
                     </span>
@@ -486,9 +487,9 @@
                 @endphp
 
                 @foreach ($coreValues as $val)
-                    <div class="bento-card p-7 flex flex-col justify-between" data-about-reveal-item>
+                    <div class="bento-card p-7 flex flex-col justify-between" data-about-reveal-item data-tilt-card>
                         <div>
-                            <div class="w-[52px] h-[52px] rounded-2xl bg-[#0F1E2E] border border-[#C99A49]/60 flex items-center justify-center font-serif font-bold text-[18px] text-[#E6C587]">
+                            <div data-core-badge class="w-[52px] h-[52px] rounded-2xl bg-[#0F1E2E] border border-[#C99A49]/60 flex items-center justify-center font-serif font-bold text-[18px] text-[#E6C587]">
                                 {{ $val['num'] }}
                             </div>
                             <h3 class="mt-5 font-serif font-bold text-[22px] text-[#0F1E2E]">
@@ -527,6 +528,7 @@
                 </div>
                 <div class="shrink-0">
                     <a href="{{ route('products') }}"
+                       data-magnetic
                        class="inline-flex items-center justify-center h-[54px] px-8 rounded-full bg-[#0F1E2E] text-white font-sans font-bold text-[13.5px] hover:bg-[#193048] transition">
                         Lihat Koleksi Kami
                     </a>
